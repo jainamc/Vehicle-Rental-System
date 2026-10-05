@@ -1,0 +1,273 @@
+{
+  "revision": 11,
+  "state": {
+    "blacklistedCustomers": [],
+    "bookings": [
+      {
+        "charge": 5400,
+        "created": "2026-10-01",
+        "customer": "Maya Chen",
+        "deposit": 3000,
+        "end": "2026-10-04",
+        "id": "RW-1048",
+        "kmCap": "120 km/day",
+        "kyc": {
+          "aadhaar": "XXXX-XXXX-2034",
+          "dl": "DL-042011995",
+          "verificationStatus": "Verified"
+        },
+        "plan": "Daily",
+        "returned": false,
+        "start": "2026-10-01",
+        "vehicleId": "HAT-101"
+      },
+      {
+        "charge": 3500,
+        "created": "2026-09-27",
+        "customer": "Jordan Lee",
+        "deposit": 2000,
+        "end": "2026-10-01",
+        "id": "RW-1047",
+        "kmCap": "120 km/day",
+        "kyc": {
+          "aadhaar": "XXXX-XXXX-1199",
+          "dl": "DL-182009882",
+          "verificationStatus": "Pending DL Check"
+        },
+        "plan": "Daily",
+        "returned": false,
+        "start": "2026-09-27",
+        "vehicleId": "SCO-301"
+      },
+      {
+        "actualReturn": "2026-08-24",
+        "charge": 9600,
+        "created": "2026-08-21",
+        "customer": "Sam Rivera",
+        "deposit": 6000,
+        "end": "2026-08-24",
+        "id": "RW-1046",
+        "kmCap": "300 km/day",
+        "kyc": {
+          "aadhaar": "XXXX-XXXX-1142",
+          "dl": "DL-220034190",
+          "verificationStatus": "Verified"
+        },
+        "plan": "Daily",
+        "returned": true,
+        "start": "2026-08-21",
+        "vehicleId": "EV-401"
+      },
+      {
+        "actualReturn": "2026-09-16",
+        "charge": 8800,
+        "created": "2026-09-12",
+        "customer": "Jordan Lee",
+        "deposit": 3500,
+        "end": "2026-09-16",
+        "id": "RW-1045",
+        "kmCap": "120 km/day",
+        "kyc": {
+          "aadhaar": "XXXX-XXXX-1142",
+          "dl": "DL-220034190",
+          "verificationStatus": "Verified"
+        },
+        "plan": "Daily",
+        "returned": true,
+        "start": "2026-09-12",
+        "vehicleId": "HAT-102"
+      },
+      {
+        "actualReturn": "2026-07-20",
+        "charge": 18900,
+        "created": "2026-07-16",
+        "customer": "Nora Patel",
+        "deposit": 10000,
+        "end": "2026-07-20",
+        "id": "RW-1044",
+        "kmCap": "Unlimited km",
+        "kyc": {
+          "aadhaar": "XXXX-XXXX-7788",
+          "dl": "DL-951077351",
+          "verificationStatus": "Verified"
+        },
+        "plan": "Weekly",
+        "returned": true,
+        "start": "2026-07-16",
+        "vehicleId": "SUV-201"
+      },
+      {
+        "actualReturn": "2026-06-23",
+        "charge": 20400,
+        "created": "2026-06-20",
+        "customer": "Jordan Lee",
+        "deposit": 15000,
+        "end": "2026-06-23",
+        "id": "RW-1043",
+        "kmCap": "Unlimited km",
+        "kyc": {
+          "aadhaar": "XXXX-XXXX-5667",
+          "dl": "DL-991004554",
+          "verificationStatus": "Verified"
+        },
+        "plan": "Monthly",
+        "returned": true,
+        "start": "2026-06-20",
+        "vehicleId": "PRE-501"
+      },
+      {
+        "charge": 5400,
+        "created": "2026-10-02",
+        "customer": "Alex Morgan",
+        "deposit": 3000,
+        "end": "2026-10-09",
+        "id": "RW-1042",
+        "kmCap": "120 km/day",
+        "kyc": {
+          "aadhaar": "XXXX-XXXX-4411",
+          "dl": "DL-440019875",
+          "verificationStatus": "Pending DL Check"
+        },
+        "plan": "Daily",
+        "returned": false,
+        "start": "2026-10-06",
+        "vehicleId": "HAT-101"
+      }
+    ],
+    "extraRevenue": [
+      {
+        "amount": 520,
+        "date": "2026-09-30",
+        "kind": "Late return"
+      },
+      {
+        "amount": 1500,
+        "date": "2026-07-29",
+        "kind": "Fastag toll deduction"
+      },
+      {
+        "amount": 890,
+        "date": "2026-06-04",
+        "kind": "Damage assessment"
+      }
+    ],
+    "maintenanceRecords": [],
+    "nextId": 1049,
+    "vehicles": [
+      {
+        "age": 2,
+        "fastagBalance": 640,
+        "fastagId": "FASTAG-401",
+        "fitnessCertificate": "Valid",
+        "fuelType": "Petrol",
+        "id": "HAT-101",
+        "image": "car",
+        "model": "Maruti Swift",
+        "permitStatus": "All India Tourist Permit",
+        "price": 1800,
+        "pucExpiry": "2026-12-15",
+        "range": 800,
+        "registrationNumber": "MH 12 AB 1234",
+        "seats": 5,
+        "securityDeposit": 3000,
+        "transmission": "Manual",
+        "type": "Hatchback"
+      },
+      {
+        "age": 2,
+        "fastagBalance": 520,
+        "fastagId": "FASTAG-402",
+        "fitnessCertificate": "Valid",
+        "fuelType": "Diesel",
+        "id": "SUV-201",
+        "image": "luxury",
+        "model": "Mahindra Thar",
+        "permitStatus": "All India Tourist Permit",
+        "price": 4200,
+        "pucExpiry": "2026-11-20",
+        "range": 700,
+        "registrationNumber": "MH 14 CD 4321",
+        "seats": 4,
+        "securityDeposit": 10000,
+        "transmission": "Manual",
+        "type": "SUV"
+      },
+      {
+        "age": 1,
+        "fastagBalance": 510,
+        "fastagId": "FASTAG-403",
+        "fitnessCertificate": "Valid",
+        "fuelType": "Petrol",
+        "id": "HAT-102",
+        "image": "car",
+        "model": "Hyundai i20",
+        "permitStatus": "Local permit",
+        "price": 2200,
+        "pucExpiry": "2027-01-05",
+        "range": 750,
+        "registrationNumber": "KA 03 EF 9999",
+        "seats": 5,
+        "securityDeposit": 3500,
+        "transmission": "Automatic",
+        "type": "Hatchback"
+      },
+      {
+        "age": 2,
+        "fastagBalance": 250,
+        "fastagId": "FASTAG-404",
+        "fitnessCertificate": "Pending",
+        "fuelType": "Petrol",
+        "id": "SCO-301",
+        "image": "bike",
+        "model": "Honda Activa 6G",
+        "permitStatus": "Local permit",
+        "price": 900,
+        "pucExpiry": "2026-10-28",
+        "range": 300,
+        "registrationNumber": "DL 01 GH 2233",
+        "seats": 1,
+        "securityDeposit": 2000,
+        "transmission": "Automatic",
+        "type": "Two-Wheeler"
+      },
+      {
+        "age": 1,
+        "fastagBalance": 700,
+        "fastagId": "FASTAG-405",
+        "fitnessCertificate": "Valid",
+        "fuelType": "Electric",
+        "id": "EV-401",
+        "image": "ev",
+        "model": "Tata Nexon EV",
+        "permitStatus": "All India Tourist Permit",
+        "price": 3200,
+        "pucExpiry": "2027-02-11",
+        "range": 450,
+        "registrationNumber": "TN 09 KL 7788",
+        "seats": 5,
+        "securityDeposit": 6000,
+        "transmission": "Automatic",
+        "type": "EV"
+      },
+      {
+        "age": 1,
+        "fastagBalance": 980,
+        "fastagId": "FASTAG-406",
+        "fitnessCertificate": "Valid",
+        "fuelType": "Diesel",
+        "id": "PRE-501",
+        "image": "luxury",
+        "model": "BMW 3 Series",
+        "permitStatus": "All India Tourist Permit",
+        "price": 6800,
+        "pucExpiry": "2026-11-18",
+        "range": 700,
+        "registrationNumber": "MH 02 RT 5566",
+        "seats": 5,
+        "securityDeposit": 15000,
+        "transmission": "Automatic",
+        "type": "Premium"
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+ROADWISE 1
+NEXT 1
+VEHICLE "Car" "C001" "Toyota Corolla" 65 3 5 800 0
+VEHICLE "Car" "C002" "Ford Mustang" 150 2 4 800 0
+VEHICLE "Bike" "B001" "Yamaha R1" 80 2 2 450 1000
+VEHICLE "Bike" "B002" "Honda Rebel" 65 4 2 450 500
+VEHICLE "EV" "E001" "Tesla Model 3" 120 1 5 450 0
+VEHICLE "Luxury" "L001" "Mercedes S-Class" 220 1 5 700 0
+VEHICLE "Vintage" "L001" "Mercedes A-Grade" 220 1 5 7Vintage

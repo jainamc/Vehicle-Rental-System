@@ -1,0 +1,88 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Rental System (C++)",
+      "type": "process",
+      "command": "g++",
+      "args": [
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-pedantic",
+        "${workspaceFolder}/.vscode/oops.cpp",
+        "-o",
+        "${workspaceFolder}/.vscode/oops.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$gcc",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Run Rental System (C++)",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "& '${workspaceFolder}\\.vscode\\oops.exe'"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Build Rental System (C++)",
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Shared Rental Web App (C++)",
+      "type": "process",
+      "command": "g++",
+      "args": [
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-pedantic",
+        "-I${workspaceFolder}/.vscode/vendor",
+        "${workspaceFolder}/.vscode/shared_server.cpp",
+        "-o",
+        "${workspaceFolder}/.vscode/shared_server.exe",
+        "-lws2_32"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Run Shared Rental Web App (C++)",
+      "type": "process",
+      "command": "${workspaceFolder}/.vscode/shared_server.exe",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Build Shared Rental Web App (C++)",
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Open Rental Web App",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "Start-Process -FilePath 'http://127.0.0.1:8080/'"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

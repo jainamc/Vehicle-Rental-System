@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f5f1">
+  <title>Roadwise | Fleet operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17221f;
+      --muted: #78817d;
+      --line: #e7eae6;
+      --paper: #ffffff;
+      --canvas: #f3f5f1;
+      --accent: #ed6847;
+      --accent-dark: #c94e32;
+      --mint: #cde9d5;
+      --green: #28714e;
+      --green-wash: #e7f4eb;
+      --yellow: #f4d45d;
+      --red-wash: #fff0eb;
+      --radius: 7px;
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--canvas); min-width: 320px; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 224px minmax(0, 1fr); }
+    .rail { background: #19231f; color: #f6f7f4; display: flex; flex-direction: column; padding: 25px 16px 18px; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 9px 31px; }
+    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px 10px 10px 3px; background: var(--accent); color: white; }
+    .brand-mark svg { width: 20px; height: 20px; }
+    .brand-name { font-size: 17px; font-weight: 800; letter-spacing: 0; }
+    .brand-sub { color: #9aa69f; font: 10px "DM Mono", monospace; margin-top: 2px; letter-spacing: 0; }
+    .rail-label { padding: 0 11px; margin: 2px 0 10px; color: #87928c; font: 10px "DM Mono", monospace; text-transform: uppercase; }
+    .nav { display: grid; gap: 5px; }
+    .nav button { display: flex; gap: 12px; align-items: center; height: 42px; width: 100%; padding: 0 12px; color: #aeb9b2; background: transparent; border: 0; border-radius: 6px; text-align: left; font-size: 12px; font-weight: 700; }
+    .nav button:hover { color: white; background: #26342d; }
+    .nav button.active { color: white; background: #304139; box-shadow: inset 3px 0 var(--accent); }
+    .nav svg { width: 17px; height: 17px; stroke-width: 1.7; }
+    .rail-spacer { flex: 1; }
+    .rail-note { margin: 16px 4px 4px; padding: 13px; border: 1px solid #36443c; border-radius: var(--radius); }
+    .rail-note strong { display: block; font-size: 11px; }
+    .rail-note span { display: block; color: #9aa69f; margin-top: 5px; font-size: 10px; line-height: 1.6; }
+    .profile { border-top: 1px solid #36443c; margin-top: 17px; padding: 17px 5px 0; display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 31px; height: 31px; display: grid; place-items: center; background: #f4d45d; color: var(--ink); border-radius: 50%; font-size: 11px; font-weight: 800; }
+    .profile strong { display: block; font-size: 11px; }
+    .profile small { display: block; margin-top: 2px; color: #98a39c; font-size: 10px; }
+    .main { min-width: 0; padding: 0 34px 42px; }
+    .topbar { height: 76px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .crumb { color: var(--muted); font-size: 11px; }
+    .crumb b { color: var(--ink); font-weight: 700; }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .today { font: 10px "DM Mono", monospace; color: #67736c; }
+    .storage-status { color: var(--green); font-size: 10px; font-weight: 800; white-space: nowrap; }
+    .storage-status.error { color: #b4472e; }
+    .icon-button { display: grid; place-items: center; width: 35px; height: 35px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: white; }
+    .icon-button svg { width: 16px; height: 16px; }
+    .page-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; padding: 26px 0 20px; }
+    .eyebrow { display: flex; align-items: center; gap: 7px; color: var(--green); font: 10px "DM Mono", monospace; text-transform: uppercase; }
+    .pulse { width: 7px; height: 7px; border-radius: 50%; background: #48a76f; box-shadow: 0 0 0 4px #48a76f1c; }
+    h1 { margin: 7px 0 0; font-size: 26px; line-height: 1.15; letter-spacing: 0; }
+    .subheading { margin: 7px 0 0; color: var(--muted); font-size: 11px; }
+    .heading-actions { display: flex; gap: 8px; }
+    .button { height: 37px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 13px; border: 1px solid var(--line); border-radius: 5px; background: white; color: var(--ink); font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .button:hover { border-color: #c9d0ca; }
+    .button svg { width: 15px; height: 15px; }
+    .button.primary { border-color: var(--accent); background: var(--accent); color: white; }
+    .button.primary:hover { border-color: var(--accent-dark); background: var(--accent-dark); }
+    .button.dark { border-color: var(--ink); background: var(--ink); color: white; }
+    .button.small { height: 30px; padding: 0 9px; font-size: 10px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .metric { min-height: 112px; padding: 15px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); animation: rise .38s both; }
+    .metric:nth-child(2) { animation-delay: .05s; }.metric:nth-child(3) { animation-delay: .1s; }.metric:nth-child(4) { animation-delay: .15s; }
+    .metric-top { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 10px; font-weight: 700; }
+    .metric-icon { display: grid; place-items: center; width: 26px; height: 26px; background: #f0f3ef; border-radius: 6px; color: #55635b; }
+    .metric-icon svg { width: 14px; height: 14px; }
+    .metric-value { margin-top: 10px; font-size: 25px; font-weight: 800; line-height: 1; letter-spacing: 0; }
+    .metric-foot { margin-top: 8px; color: var(--muted); font-size: 9px; }
+    .metric-foot .up { color: var(--green); font-weight: 800; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, .9fr); gap: 13px; margin-top: 13px; }
+    .panel { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); }
+    .panel-head { min-height: 55px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+    .panel-title { margin: 0; font-size: 12px; font-weight: 800; }
+    .panel-caption { margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .select-plain { padding: 6px 9px; border: 1px solid var(--line); border-radius: 5px; background: white; color: #59645e; font-size: 10px; }
+    .chart-legend { padding: 13px 17px 0; display: flex; justify-content: space-between; align-items: center; }
+    .chart-amount { font-size: 21px; font-weight: 800; }
+    .chart-amount small { color: var(--muted); font-size: 9px; font-weight: 600; }
+    .legend { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 9px; }
+    .legend i { width: 7px; height: 7px; border-radius: 2px; background: var(--accent); }
+    .bars { height: 148px; margin: 11px 18px 15px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 11px; align-items: end; border-bottom: 1px solid var(--line); background: repeating-linear-gradient(to bottom, transparent 0 35px, #edf0ec 36px 37px); }
+    .bar-column { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; z-index: 1; }
+    .bar { width: min(25px, 70%); min-height: 4px; background: #f1ad9a; border-radius: 4px 4px 0 0; transition: height .35s ease; }
+    .bar.current { background: var(--accent); }
+    .bar-label { height: 14px; color: var(--muted); font: 9px "DM Mono", monospace; }
+    .fleet-list { padding: 3px 15px 8px; }
+    .fleet-row { min-height: 49px; display: grid; grid-template-columns: 35px 1fr auto; align-items: center; gap: 9px; border-bottom: 1px solid #eff1ee; }
+    .fleet-row:last-child { border-bottom: 0; }
+    .fleet-thumb { width: 34px; height: 30px; overflow: hidden; border-radius: 4px; background: #eef1ed; }
+    .fleet-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .fleet-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-weight: 800; }
+    .fleet-type { margin-top: 2px; color: var(--muted); font-size: 9px; }
+    .status { display: inline-flex; align-items: center; gap: 5px; color: var(--green); font-size: 9px; font-weight: 800; white-space: nowrap; }
+    .status::before { content: ""; width: 6px; height: 6px; background: #48a76f; border-radius: 50%; }
+    .status.booked { color: #aa593f; }.status.booked::before { background: var(--accent); }
+    .lower-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, .9fr); gap: 13px; margin-top: 13px; }
+    .rental-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .rental-table th { color: var(--muted); font: 9px "DM Mono", monospace; text-transform: uppercase; padding: 10px 13px; border-bottom: 1px solid var(--line); }
+    .rental-table td { padding: 11px 13px; border-bottom: 1px solid #eff1ee; font-size: 10px; }
+    .rental-table tr:last-child td { border-bottom: 0; }
+    .rental-table td:first-child { font-weight: 800; }
+    .table-muted { display: block; color: var(--muted); font-size: 9px; margin-top: 3px; }
+    .booking-code { color: #68746d; font: 9px "DM Mono", monospace; }
+    .tier { padding: 4px 7px; border-radius: 4px; background: #f0f3ef; color: #546158; font-size: 9px; font-weight: 800; white-space: nowrap; }
+    .tier.gold { background: #fff3d4; color: #8b6715; }.tier.platinum { background: #e8edf0; color: #3c535e; }.tier.silver { background: #e8f4ec; color: #34704d; }
+    .rank-list { padding: 6px 15px; }
+    .rank-row { display: grid; grid-template-columns: 18px 36px 1fr auto; gap: 8px; align-items: center; min-height: 45px; border-bottom: 1px solid #eff1ee; }
+    .rank-row:last-child { border: 0; }
+    .rank-number { color: #9ba59f; font: 10px "DM Mono", monospace; }
+    .rank-img { height: 29px; width: 36px; border-radius: 4px; object-fit: cover; background: #eef1ed; }
+    .rank-model { font-size: 10px; font-weight: 800; }.rank-type { margin-top: 2px; color: var(--muted); font-size: 9px; }
+    .rank-count { font: 10px "DM Mono", monospace; }
+    .section-toolbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin: 3px 0 14px; }
+    .searchbox { height: 35px; display: flex; align-items: center; gap: 8px; width: min(260px, 100%); padding: 0 10px; border: 1px solid var(--line); border-radius: 5px; background: white; }
+    .searchbox svg { width: 14px; height: 14px; color: var(--muted); }
+    .searchbox input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; font-size: 10px; }
+    .toolbar-end { display: flex; gap: 7px; }
+    .vehicle-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+    .vehicle-card { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: white; animation: rise .35s both; }
+    .vehicle-image { position: relative; height: 150px; overflow: hidden; background: #e8ece7; }
+    .vehicle-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+    .vehicle-card:hover .vehicle-image img { transform: scale(1.035); }
+    .vehicle-tag { position: absolute; top: 10px; left: 10px; padding: 5px 7px; border-radius: 4px; background: #ffffffeb; color: #34413a; font: 9px "DM Mono", monospace; }
+    .vehicle-card-body { padding: 12px; }
+    .vehicle-card-title { display: flex; justify-content: space-between; gap: 8px; }
+    .vehicle-card-title h3 { margin: 0; font-size: 12px; }
+    .vehicle-price { white-space: nowrap; font-size: 12px; font-weight: 800; }
+    .vehicle-price small { color: var(--muted); font-size: 9px; font-weight: 500; }
+    .vehicle-meta { display: flex; gap: 12px; margin-top: 10px; color: #66726b; font-size: 9px; }
+    .vehicle-meta span { display: inline-flex; align-items: center; gap: 4px; }
+    .vehicle-meta svg { width: 13px; height: 13px; }
+    .vehicle-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eff1ee; margin-top: 12px; padding-top: 10px; }
+    .vehicle-id { color: var(--muted); font: 9px "DM Mono", monospace; }
+    .empty { grid-column: 1 / -1; padding: 35px 20px; border: 1px dashed #d4dad4; border-radius: var(--radius); color: var(--muted); text-align: center; font-size: 11px; }
+    .reservation-tools { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .filter-group { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 6px; background: white; }
+    .filter-group button { border: 0; border-radius: 4px; padding: 6px 10px; color: var(--muted); background: transparent; font-size: 9px; font-weight: 800; }
+    .filter-group button.active { color: var(--ink); background: #edf1ec; }
+    .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .report-big { padding: 16px; }
+    .report-total { margin: 8px 0 4px; font-size: 28px; font-weight: 800; }
+    .report-note { color: var(--muted); font-size: 10px; }
+    .report-bars { margin-top: 20px; }
+    .report-bar-row { display: grid; grid-template-columns: 48px 1fr 65px; align-items: center; gap: 9px; margin: 13px 0; color: var(--muted); font: 9px "DM Mono", monospace; }
+    .report-track { height: 8px; background: #eef1ed; border-radius: 5px; overflow: hidden; }
+    .report-fill { height: 100%; background: var(--accent); border-radius: inherit; }
+    .report-value { text-align: right; color: var(--ink); }
+    .report-stat { display: flex; align-items: baseline; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .report-stat:last-child { border: 0; }.report-stat strong { font-size: 21px; }.report-stat span { color: var(--muted); font-size: 10px; }
+    .ops-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); gap: 13px; margin-top: 13px; }
+    .ops-table-wrap { overflow-x: auto; }.ops-table { width: 100%; min-width: 700px; border-collapse: collapse; text-align: left; }
+    .ops-table th { padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--muted); font: 9px "DM Mono", monospace; text-transform: uppercase; }
+    .ops-table td { padding: 10px 12px; border-bottom: 1px solid #eff1ee; font-size: 10px; white-space: nowrap; }
+    .ops-table tr:last-child td { border: 0; }.alert-list { padding: 6px 15px; }
+    .alert-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #eff1ee; font-size: 10px; }
+    .alert-item:last-child { border: 0; }.alert-item strong { display: block; font-size: 10px; }.alert-item small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .alert-severity { color: #a7462c; font: 9px "DM Mono", monospace; white-space: nowrap; }.alert-severity.watch { color: #926e15; }
+    .image-credit { position: absolute; right: 8px; bottom: 8px; padding: 4px 6px; border-radius: 3px; background: #15211dcc; color: white; font-size: 8px; text-decoration: none; }
+    .image-credit:hover { background: #15211d; text-decoration: underline; }
+    .screen { display: none; }.screen.active { display: block; animation: appear .2s ease-out; }
+    dialog { width: min(490px, calc(100vw - 28px)); max-height: min(88vh, 760px); padding: 0; border: 0; border-radius: 9px; color: var(--ink); box-shadow: 0 24px 80px #101a1640; }
+    dialog::backdrop { background: #14201bd0; backdrop-filter: blur(3px); }
+    .dialog-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 18px 19px 14px; border-bottom: 1px solid var(--line); }
+    .dialog-head h2 { margin: 0; font-size: 16px; }.dialog-head p { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
+    .close-dialog { width: 29px; height: 29px; border: 1px solid var(--line); background: white; border-radius: 5px; font-size: 17px; line-height: 1; }
+    .dialog-form { padding: 16px 19px 19px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { display: grid; gap: 6px; margin-bottom: 12px; }.field.full { grid-column: 1 / -1; }
+    .field label { color: #59645e; font-size: 10px; font-weight: 800; }
+    .field input, .field select { width: 100%; height: 37px; padding: 0 10px; border: 1px solid #dfe4df; border-radius: 5px; background: white; color: var(--ink); outline: 0; font-size: 11px; }
+    .field input:focus, .field select:focus { border-color: #6c9b7d; box-shadow: 0 0 0 3px #6c9b7d20; }
+    .quote-box { display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; margin: 3px 0 14px; padding: 12px; background: #f3f6f2; border-radius: 5px; font-size: 10px; }
+    .quote-box span { color: #69756d; }.quote-box strong { text-align: right; }.quote-total { border-top: 1px solid #dfe6df; padding-top: 7px; font-size: 12px; }
+    .form-error { min-height: 17px; margin: 0 0 7px; color: #b4472e; font-size: 10px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .toast { position: fixed; right: 22px; bottom: 22px; z-index: 5; max-width: min(360px, calc(100vw - 32px)); padding: 12px 15px; border-radius: 6px; background: #1c2922; color: white; box-shadow: 0 10px 30px #101a1630; font-size: 11px; animation: rise .2s ease-out; }
+    .mobile-menu { display: none; }
+    @keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+    @media (max-width: 1080px) {
+      .main { padding-right: 22px; padding-left: 22px; }
+      .vehicle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dashboard-grid, .lower-grid { grid-template-columns: minmax(0, 1.4fr) minmax(230px, .9fr); }
+    }
+    @media (max-width: 760px) {
+      .app { grid-template-columns: 1fr; }
+      .rail { position: sticky; z-index: 3; top: 0; height: 58px; padding: 0 14px; flex-direction: row; align-items: center; justify-content: space-between; }
+      .brand { padding: 0; }.brand-mark { width: 30px; height: 30px; }.brand-sub, .rail-label, .rail-spacer, .rail-note, .profile { display: none; }
+      .nav { display: flex; gap: 3px; }.nav button { width: 36px; height: 36px; justify-content: center; padding: 0; font-size: 0; }.nav button.active { box-shadow: inset 0 -2px var(--accent); }
+      .nav svg { width: 17px; height: 17px; }
+      .main { padding: 0 16px 28px; }.topbar { height: 52px; }.today { font-size: 9px; }
+      .page-heading { align-items: flex-start; flex-direction: column; padding: 20px 0 16px; }.heading-actions { width: 100%; }.heading-actions .button { flex: 1; }
+      h1 { font-size: 23px; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }.metric { min-height: 100px; padding: 12px; }.metric-value { font-size: 22px; }
+      .dashboard-grid, .lower-grid { grid-template-columns: 1fr; gap: 9px; margin-top: 9px; }
+      .bars { height: 125px; margin-left: 12px; margin-right: 12px; gap: 6px; }
+      .table-wrap { overflow-x: auto; }.rental-table { min-width: 500px; }
+      .vehicle-grid { grid-template-columns: 1fr; gap: 9px; }.vehicle-image { height: 180px; }
+      .report-grid { grid-template-columns: 1fr; }.section-toolbar { align-items: stretch; flex-direction: column; }.searchbox { width: 100%; }
+      .heading-actions .button { padding: 0 8px; font-size: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13.5h18l-1.7-5.2a2 2 0 0 0-1.9-1.3H6.6a2 2 0 0 0-1.9 1.3L3 13.5Z"/><path d="M5 13.5v4m14-4v4M3 16h18M7 17.5h.01M17 17.5h.01"/><path d="M8 7l1-2h6l1 2"/></svg></div>
+        <div><div class="brand-name">roadwise</div><div class="brand-sub">FLEET OPERATIONS</div></div>
+      </div>
+      <div class="rail-label">Workspace</div>
+      <nav class="nav" aria-label="Main navigation">
+        <button class="active" data-view="overview" title="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="8" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="11" width="7" height="10" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/></svg>Overview</button>
+        <button data-view="fleet" title="Fleet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 13.5h18l-1.7-5.2a2 2 0 0 0-1.9-1.3H6.6a2 2 0 0 0-1.9 1.3L3 13.5Z"/><path d="M5 13.5v4m14-4v4M3 16h18M7 17.5h.01M17 17.5h.01"/></svg>Fleet</button>
+        <button data-view="rentals" title="Rentals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18m-13 4h3m-3 3h6"/></svg>Rentals</button>
+        <button data-view="reports" title="Reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5m0 14h17M8 16v-4m5 4V7m5 9v-7"/></svg>Reports</button>
+        <button data-view="operations" title="Operations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3 4 6v5c0 5 3.4 8.2 8 10 4.6-1.8 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>Operations</button>
+      </nav>
+      <div class="rail-spacer"></div>
+      <div class="rail-note"><strong>Shared fleet workspace</strong><span>Changes sync through the host computer while the shared server is running.</span></div>
+      <div class="profile"><div class="avatar">RW</div><div><strong>Fleet manager</strong><small>Administrator</small></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="crumb">Workspace <span aria-hidden="true">/</span> <b id="crumb-current">Overview</b></div>
+        <div class="top-actions"><span class="today" id="today-label"></span><span class="storage-status" id="storage-status" aria-live="polite">Local demo mode</span><button class="icon-button" id="reset-data" title="Reset demo data" aria-label="Reset demo data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 2.64-6.36L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg></button></div>
+      </header>
+
+      <section class="screen active" id="screen-overview">
+        <div class="page-heading"><div><div class="eyebrow"><span class="pulse"></span> Fleet status · live</div><h1>Good morning, manager.</h1><p class="subheading">Here is what is happening across your rental fleet.</p></div><div class="heading-actions"><button class="button" data-action="recommend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Z"/><path d="m19 14 1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14Z"/></svg>Find my ride</button><button class="button primary" data-action="book"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New booking</button></div></div>
+        <div class="metrics" id="metrics"></div>
+        <div class="dashboard-grid">
+          <section class="panel"><div class="panel-head"><div><h2 class="panel-title">Revenue overview</h2><div class="panel-caption">Rental charges, late fees & damage assessments</div></div><select class="select-plain" id="revenue-period" aria-label="Revenue chart period"><option value="7">Last 7 months</option><option value="4">Last 4 months</option></select></div><div class="chart-legend"><div class="chart-amount" id="revenue-total">₹0 <small>total revenue</small></div><div class="legend"><i></i>Revenue</div></div><div class="bars" id="revenue-chart"></div></section>
+          <section class="panel"><div class="panel-head"><div><h2 class="panel-title">Fleet availability</h2><div class="panel-caption">Status for today</div></div><button class="button small" data-view-link="fleet">View fleet <span aria-hidden="true">→</span></button></div><div class="fleet-list" id="availability-list"></div></section>
+        </div>
+        <div class="lower-grid">
+          <section class="panel"><div class="panel-head"><div><h2 class="panel-title">Recent rentals</h2><div class="panel-caption">Latest bookings and return activity</div></div><button class="button small" data-view-link="rentals">All rentals <span aria-hidden="true">→</span></button></div><div class="table-wrap"><table class="rental-table"><thead><tr><th>Customer</th><th>Vehicle</th><th>Dates</th><th>Status</th><th></th></tr></thead><tbody id="recent-rentals"></tbody></table></div></section>
+          <section class="panel"><div class="panel-head"><div><h2 class="panel-title">Most rented</h2><div class="panel-caption">By number of bookings</div></div></div><div class="rank-list" id="rank-list"></div></section>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-fleet">
+        <div class="page-heading"><div><div class="eyebrow"><span class="pulse"></span> Fleet inventory</div><h1>Your vehicles.</h1><p class="subheading">Manage availability, class, and daily rates.</p></div><div class="heading-actions"><button class="button" data-action="recommend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Z"/></svg>Recommend</button><button class="button primary" data-action="add-vehicle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add vehicle</button></div></div>
+        <div class="section-toolbar"><label class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="fleet-search" placeholder="Search model, ID or registration" aria-label="Search fleet"></label><div class="toolbar-end"><select class="select-plain" id="fleet-type" aria-label="Filter vehicle type"><option value="all">All types</option><option>Hatchback</option><option>SUV</option><option>Premium</option><option>Two-Wheeler</option><option>EV</option></select><select class="select-plain" id="fleet-status" aria-label="Filter availability"><option value="all">All availability</option><option value="available">Available</option><option value="booked">Booked</option></select></div></div>
+        <div class="vehicle-grid" id="vehicle-grid"></div>
+      </section>
+
+      <section class="screen" id="screen-rentals">
+        <div class="page-heading"><div><div class="eyebrow"><span class="pulse"></span> Booking calendar</div><h1>Reservations.</h1><p class="subheading">Track overlapping dates, check-ins, and returns.</p></div><div class="heading-actions"><button class="button primary" data-action="book"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New booking</button></div></div>
+        <div class="reservation-tools"><div class="filter-group" id="rental-filters"><button class="active" data-filter="all">All</button><button data-filter="active">In progress</button><button data-filter="overdue">Overdue</button><button data-filter="upcoming">Upcoming</button><button data-filter="returned">Returned</button></div><label class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="rental-search" placeholder="Search customer, vehicle, ID" aria-label="Search rentals"></label></div>
+        <section class="panel"><div class="table-wrap"><table class="rental-table"><thead><tr><th>Booking</th><th>Customer</th><th>Vehicle</th><th>Rental dates</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="all-rentals"></tbody></table></div></section>
+      </section>
+
+      <section class="screen" id="screen-reports">
+        <div class="page-heading"><div><div class="eyebrow"><span class="pulse"></span> Fleet intelligence</div><h1>Reports.</h1><p class="subheading">Revenue trends and utilization at a glance.</p></div><div class="heading-actions"><button class="button" id="import-data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v4h16v-4"/></svg>Import backup</button><button class="button" id="export-data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3"/></svg>Export data</button></div></div>
+        <div class="report-grid"><section class="panel report-big"><h2 class="panel-title">Monthly revenue</h2><div class="report-total" id="report-total">₹0</div><div class="report-note">Recorded rental and return charges</div><div class="report-bars" id="report-bars"></div></section><section class="panel report-big"><h2 class="panel-title">Fleet utilization</h2><div class="report-total" id="report-util">0%</div><div class="report-note">Distinct vehicles currently rented or overdue</div><div class="report-bars" id="report-activity"></div></section><section class="panel report-big"><h2 class="panel-title">Rental activity</h2><div id="report-activity-stats"></div></section><section class="panel report-big"><h2 class="panel-title">Customer loyalty</h2><div class="report-note">Discount tier is based on completed rentals.</div><div id="loyalty-stats" style="margin-top:12px"></div></section></div>
+      </section>
+
+      <section class="screen" id="screen-operations">
+        <div class="page-heading"><div><div class="eyebrow"><span class="pulse"></span> Readiness & compliance</div><h1>Fleet operations.</h1><p class="subheading">Documents, service readiness, Fastag balances, and driver verification.</p></div></div>
+        <div class="ops-grid"><section class="panel"><div class="panel-head"><div><h2 class="panel-title">Action required</h2><div class="panel-caption" id="ops-alert-count">Live document and fleet alerts</div></div></div><div class="alert-list" id="operations-alerts"></div></section><section class="panel"><div class="panel-head"><div><h2 class="panel-title">Driver verification</h2><div class="panel-caption">Review KYC and blocklisted customers</div></div></div><div class="ops-table-wrap"><table class="ops-table"><thead><tr><th>Customer</th><th>Identity</th><th>Access</th><th>Action</th></tr></thead><tbody id="operations-drivers"></tbody></table></div></section></div>
+        <section class="panel" style="margin-top:13px"><div class="panel-head"><div><h2 class="panel-title">Vehicle readiness</h2><div class="panel-caption">Permit, PUC, fitness, Fastag, and scheduled service</div></div></div><div class="ops-table-wrap"><table class="ops-table"><thead><tr><th>Vehicle</th><th>Registration</th><th>PUC validity</th><th>Permit</th><th>Fitness</th><th>Fastag</th><th>Maintenance</th><th></th></tr></thead><tbody id="operations-vehicles"></tbody></table></div></section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="booking-dialog"><div class="dialog-head"><div><h2>New reservation</h2><p>Choose a vehicle, rental plan, and KYC to create an India-ready booking.</p></div><button class="close-dialog" data-close aria-label="Close">×</button></div><form class="dialog-form" id="booking-form"><div class="form-grid"><div class="field full"><label for="booking-vehicle">Vehicle</label><select id="booking-vehicle" required></select></div><div class="field"><label for="booking-customer">Customer name</label><input id="booking-customer" autocomplete="name" required placeholder="e.g. Aarav Sharma"></div><div class="field"><label for="booking-dl">Driving License</label><input id="booking-dl" placeholder="DL 01 2023 0001234"></div><div class="field"><label for="booking-aadhaar">Aadhaar</label><input id="booking-aadhaar" placeholder="XXXX XXXX 1234"></div><div class="field"><label for="booking-start">Pickup date</label><input id="booking-start" type="date" required></div><div class="field"><label for="booking-days">Rental length</label><input id="booking-days" type="number" min="1" max="365" value="3" required></div><div class="field"><label for="booking-plan">Rental plan</label><select id="booking-plan"><option>Daily</option><option>Hourly</option><option>Weekly</option><option>Monthly</option></select></div><div class="field"><label for="booking-km-cap">Km cap</label><select id="booking-km-cap"><option>120 km/day</option><option>300 km/day</option><option>Unlimited km</option></select></div><div class="field"><label for="booking-emergency">Emergency contact</label><input id="booking-emergency" placeholder="+91 98xxxxxx"></div><div class="field"><label for="booking-return">Return date</label><input id="booking-return" type="text" readonly></div></div><div class="quote-box" id="quote-box"></div><p class="form-error" id="booking-error" role="alert"></p><div class="dialog-actions"><button type="button" class="button" data-close>Cancel</button><button class="button primary" type="submit">Confirm reservation</button></div></form></dialog>
+
+  <dialog id="recommend-dialog"><div class="dialog-head"><div><h2>Find the right ride</h2><p>Match the trip to your budget, distance, and group.</p></div><button class="close-dialog" data-close aria-label="Close">×</button></div><form class="dialog-form" id="recommend-form"><div class="form-grid"><div class="field"><label for="rec-budget">Budget (₹)</label><input id="rec-budget" type="number" min="0" value="2500" required></div><div class="field"><label for="rec-distance">Trip distance (km)</label><input id="rec-distance" type="number" min="1" value="300" required></div><div class="field full"><label for="rec-passengers">Passengers</label><input id="rec-passengers" type="number" min="1" value="2" required></div></div><p class="form-error" id="rec-error" role="status"></p><div class="dialog-actions"><button type="button" class="button" data-close>Close</button><button class="button primary" type="submit">Find matches</button></div></form></dialog>
+
+  <dialog id="return-dialog"><div class="dialog-head"><div><h2>Process vehicle return</h2><p id="return-booking-caption">Check the vehicle in and record any charges.</p></div><button class="close-dialog" data-close aria-label="Close">×</button></div><form class="dialog-form" id="return-form"><input type="hidden" id="return-booking-id"><div class="form-grid"><div class="field"><label for="return-date">Actual return date</label><input id="return-date" type="date" required></div><div class="field"><label for="damage-cost">Repair assessment (₹)</label><input id="damage-cost" type="number" min="0" step="0.01" value="0"></div><div class="field"><label for="excess-km-charge">Excess-km charge (₹)</label><input id="excess-km-charge" type="number" min="0" step="0.01" value="0"></div><div class="field full"><label for="damage-description">Damage report (leave blank if none)</label><input id="damage-description" placeholder="Describe damage, or leave blank"></div></div><p class="form-error" id="return-error" role="alert"></p><div class="dialog-actions"><button type="button" class="button" data-close>Cancel</button><button class="button primary" type="submit">Complete return</button></div></form></dialog>
+
+  <dialog id="vehicle-dialog"><div class="dialog-head"><div><h2>Add to fleet</h2><p>Enter the vehicle details to make it bookable in the Indian market.</p></div><button class="close-dialog" data-close aria-label="Close">×</button></div><form class="dialog-form" id="vehicle-form"><div class="form-grid"><div class="field"><label for="new-type">Vehicle class</label><select id="new-type"><option>Hatchback</option><option>SUV</option><option>Premium</option><option>Two-Wheeler</option><option>EV</option></select></div><div class="field"><label for="new-id">Fleet ID</label><input id="new-id" required placeholder="e.g. HAT-204"></div><div class="field"><label for="new-registration">Registration No.</label><input id="new-registration" required placeholder="MH 12 AB 1234"></div><div class="field full"><label for="new-model">Model</label><input id="new-model" required placeholder="Vehicle make and model"></div><div class="field"><label for="new-price">Base price per day (₹)</label><input id="new-price" type="number" min="1" value="1200" required></div><div class="field"><label for="new-age">Vehicle age (years)</label><input id="new-age" type="number" min="0" value="1" required></div><div class="field"><label for="new-seats">Passenger capacity</label><input id="new-seats" type="number" min="1" value="5" required></div><div class="field"><label for="new-fuel">Fuel type</label><select id="new-fuel"><option>Petrol</option><option>Diesel</option><option>CNG</option><option>Electric</option></select></div><div class="field"><label for="new-transmission">Transmission</label><select id="new-transmission"><option>Manual</option><option>Automatic</option></select></div><div class="field" id="new-range-field"><label for="new-range">Range (km)</label><input id="new-range" type="number" min="1" value="400"></div><div class="field"><label for="new-fastag">Fastag ID</label><input id="new-fastag" placeholder="FASTAG-1234"></div><div class="field"><label for="new-fastag-balance">Fastag balance (₹)</label><input id="new-fastag-balance" type="number" min="0" value="500"></div></div><p class="form-error" id="vehicle-error" role="alert"></p><div class="dialog-actions"><button type="button" class="button" data-close>Cancel</button><button class="button primary" type="submit">Add vehicle</button></div></form></dialog>
+  <input type="file" id="import-file" accept="application/json,.json" hidden>
+  <div id="toast-root" aria-live="polite"></div>
+
+  <script>
+    const STORE_KEY = "roadwise-demo-v1";
+    const images = {
+      car: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=900&q=80",
+      sedan: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80",
+      classic: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80",
+      bike: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=80",
+      ev: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=900&q=80",
+      luxury: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=900&q=80"
+    };
+    const vehiclePhotos = {
+      "Maruti Swift": { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/2018_Suzuki_Swift_SZ5_Boosterjet_SHVS_1.0_Front.jpg/960px-2018_Suzuki_Swift_SZ5_Boosterjet_SHVS_1.0_Front.jpg", credit: "https://commons.wikimedia.org/wiki/File:2018_Suzuki_Swift_SZ5_Boosterjet_SHVS_1.0_Front.jpg" },
+      "Mahindra Thar": { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Mahindra_Thar_Photoshoot_at_Perupalem_Beach_%28West_Godavari_District%2C_AP%2C_India%29_Djdavid.jpg/960px-Mahindra_Thar_Photoshoot_at_Perupalem_Beach_%28West_Godavari_District%2C_AP%2C_India%29_Djdavid.jpg", credit: "https://commons.wikimedia.org/wiki/File:Mahindra_Thar_Photoshoot_at_Perupalem_Beach_(West_Godavari_District,_AP,_India)_Djdavid.jpg" },
+      "Hyundai i20": { src: "https://upload.wikimedia.org/wikipedia/commons/f/fe/2020_Hyundai_i20_1.5_Asta_%28O%29_Diesel_%28India%29_front_view.png", credit: "https://commons.wikimedia.org/wiki/File:2020_Hyundai_i20_1.5_Asta_(O)_Diesel_(India)_front_view.png" },
+      "Honda Activa 6G": { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Honda_Activa_6G.jpg/960px-Honda_Activa_6G.jpg", credit: "https://commons.wikimedia.org/wiki/File:Honda_Activa_6G.jpg" },
+      "Tata Nexon EV": { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Tata_Nexon_EV_in_Hyderabad_02.jpg/960px-Tata_Nexon_EV_in_Hyderabad_02.jpg", credit: "https://commons.wikimedia.org/wiki/File:Tata_Nexon_EV_in_Hyderabad_02.jpg" },
+      "BMW 3 Series": { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/BMW_3_SERIES_LWB_SEDAN_%28G28%29_China_%283%29.jpg/960px-BMW_3_SERIES_LWB_SEDAN_%28G28%29_China_%283%29.jpg", credit: "https://commons.wikimedia.org/wiki/File:BMW_3_SERIES_LWB_SEDAN_(G28)_China_(3).jpg" }
+    };
+    const istFormatter = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+    const todayISO = istFormatter.format(new Date()).slice(0, 10);
+    const today = new Date(`${todayISO}T00:00:00`);
+    const nowIST = () => istFormatter.format(new Date()).replace(" ", "T");
+    const addHoursIST = (startAt, hours) => istFormatter.format(new Date(`${startAt}:00+05:30`).getTime() + hours * 3600000).replace(" ", "T");
+    const isoDate = (date) => {
+      const local = new Date(date);
+      local.setMinutes(local.getMinutes() - local.getTimezoneOffset());
+      return local.toISOString().slice(0, 10);
+    };
+    const addDays = (iso, days) => {
+      const date = new Date(iso + "T00:00:00");
+      date.setDate(date.getDate() + days);
+      return isoDate(date);
+    };
+    const formatINR = (amount, digits = 0) => new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: digits,
+      minimumFractionDigits: digits
+    }).format(amount);
+    const money = (amount) => formatINR(amount, 0);
+    const moneyExact = (amount) => formatINR(amount, 2);
+    const dateLabel = (iso) => {
+      const [year, month, day] = (iso || "").split("-").map(Number);
+      if (!year || !month || !day) return "—";
+      return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
+    };
+    const monthLabel = (key) => new Date(`${key}-01T00:00:00`).toLocaleDateString("en-IN", { month: "short", year: "2-digit" });
+    const escapeHTML = (value) => String(value).replace(/[&<>\"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+    const seedData = () => {
+      const previous = new Date(today.getFullYear(), today.getMonth() - 1, 12);
+      const ago = (days) => addDays(todayISO, -days);
+      return {
+        vehicles: [
+          { id: "HAT-101", model: "Maruti Swift", type: "Hatchback", price: 1800, age: 2, seats: 5, range: 800, image: "car", registrationNumber: "MH 12 AB 1234", fuelType: "Petrol", transmission: "Manual", fastagId: "FASTAG-401", fastagBalance: 640, securityDeposit: 3000, permitStatus: "All India Tourist Permit", pucExpiry: "2026-12-15", fitnessCertificate: "Valid" },
+          { id: "SUV-201", model: "Mahindra Thar", type: "SUV", price: 4200, age: 2, seats: 4, range: 700, image: "luxury", registrationNumber: "MH 14 CD 4321", fuelType: "Diesel", transmission: "Manual", fastagId: "FASTAG-402", fastagBalance: 520, securityDeposit: 10000, permitStatus: "All India Tourist Permit", pucExpiry: "2026-11-20", fitnessCertificate: "Valid" },
+          { id: "HAT-102", model: "Hyundai i20", type: "Hatchback", price: 2200, age: 1, seats: 5, range: 750, image: "car", registrationNumber: "KA 03 EF 9999", fuelType: "Petrol", transmission: "Automatic", fastagId: "FASTAG-403", fastagBalance: 510, securityDeposit: 3500, permitStatus: "Local permit", pucExpiry: "2027-01-05", fitnessCertificate: "Valid" },
+          { id: "SCO-301", model: "Honda Activa 6G", type: "Two-Wheeler", price: 900, age: 2, seats: 1, range: 300, image: "bike", registrationNumber: "DL 01 GH 2233", fuelType: "Petrol", transmission: "Automatic", fastagId: "FASTAG-404", fastagBalance: 250, securityDeposit: 2000, permitStatus: "Local permit", pucExpiry: "2026-10-28", fitnessCertificate: "Pending" },
+          { id: "EV-401", model: "Tata Nexon EV", type: "EV", price: 3200, age: 1, seats: 5, range: 450, image: "ev", registrationNumber: "TN 09 KL 7788", fuelType: "Electric", transmission: "Automatic", fastagId: "FASTAG-405", fastagBalance: 700, securityDeposit: 6000, permitStatus: "All India Tourist Permit", pucExpiry: "2027-02-11", fitnessCertificate: "Valid" },
+          { id: "PRE-501", model: "BMW 3 Series", type: "Premium", price: 6800, age: 1, seats: 5, range: 700, image: "luxury", registrationNumber: "MH 02 RT 5566", fuelType: "Diesel", transmission: "Automatic", fastagId: "FASTAG-406", fastagBalance: 980, securityDeposit: 15000, permitStatus: "All India Tourist Permit", pucExpiry: "2026-11-18", fitnessCertificate: "Valid" }
+        ],
+        bookings: [
+          { id: "RW-1048", vehicleId: "HAT-101", customer: "Maya Chen", start: ago(1), end: addDays(todayISO, 2), charge: 5400, deposit: 3000, returned: false, created: ago(1), plan: "Daily", kmCap: "120 km/day", kyc: { dl: "DL-042011995", aadhaar: "XXXX-XXXX-2034", verificationStatus: "Verified" } },
+          { id: "RW-1047", vehicleId: "SCO-301", customer: "Jordan Lee", start: ago(5), end: ago(1), charge: 3500, deposit: 2000, returned: false, created: ago(5), plan: "Daily", kmCap: "120 km/day", kyc: { dl: "DL-182009882", aadhaar: "XXXX-XXXX-1199", verificationStatus: "Pending DL Check" } },
+          { id: "RW-1046", vehicleId: "EV-401", customer: "Sam Rivera", start: ago(42), end: ago(39), charge: 9600, deposit: 6000, returned: true, created: ago(42), actualReturn: ago(39), plan: "Daily", kmCap: "300 km/day", kyc: { dl: "DL-220034190", aadhaar: "XXXX-XXXX-1142", verificationStatus: "Verified" } },
+          { id: "RW-1045", vehicleId: "HAT-102", customer: "Jordan Lee", start: isoDate(previous), end: addDays(isoDate(previous), 4), charge: 8800, deposit: 3500, returned: true, created: isoDate(previous), actualReturn: addDays(isoDate(previous), 4), plan: "Daily", kmCap: "120 km/day", kyc: { dl: "DL-220034190", aadhaar: "XXXX-XXXX-1142", verificationStatus: "Verified" } },
+          { id: "RW-1044", vehicleId: "SUV-201", customer: "Nora Patel", start: ago(78), end: ago(74), charge: 18900, deposit: 10000, returned: true, created: ago(78), actualReturn: ago(74), plan: "Weekly", kmCap: "Unlimited km", kyc: { dl: "DL-951077351", aadhaar: "XXXX-XXXX-7788", verificationStatus: "Verified" } },
+          { id: "RW-1043", vehicleId: "PRE-501", customer: "Jordan Lee", start: ago(104), end: ago(101), charge: 20400, deposit: 15000, returned: true, created: ago(104), actualReturn: ago(101), plan: "Monthly", kmCap: "Unlimited km", kyc: { dl: "DL-991004554", aadhaar: "XXXX-XXXX-5667", verificationStatus: "Verified" } },
+          { id: "RW-1042", vehicleId: "HAT-101", customer: "Alex Morgan", start: addDays(todayISO, 4), end: addDays(todayISO, 7), charge: 5400, deposit: 3000, returned: false, created: todayISO, plan: "Daily", kmCap: "120 km/day", kyc: { dl: "DL-440019875", aadhaar: "XXXX-XXXX-4411", verificationStatus: "Pending DL Check" } }
+        ],
+        extraRevenue: [
+          { date: ago(2), amount: 520, kind: "Late return" },
+          { date: ago(65), amount: 1500, kind: "Fastag toll deduction" },
+          { date: ago(120), amount: 890, kind: "Damage assessment" }
+        ],
+        blacklistedCustomers: [],
+        maintenanceRecords: [],
+        nextId: 1049
+      };
+    };
+    const validDate = (value) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+      !Number.isNaN(new Date(value + "T00:00:00").getTime());
+    const validDateTime = (value) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d$/.test(value) && validDate(value.slice(0, 10));
+    const isValidState = (candidate) => {
+      if (!candidate || typeof candidate !== "object" || !Array.isArray(candidate.vehicles) ||
+          !Array.isArray(candidate.bookings) || !Array.isArray(candidate.extraRevenue) ||
+          !Number.isSafeInteger(candidate.nextId) || candidate.nextId < 1) return false;
+      const vehicleIds = new Set();
+      for (const vehicle of candidate.vehicles) {
+        if (!vehicle || typeof vehicle.id !== "string" || !vehicle.id.trim() ||
+            typeof vehicle.model !== "string" || !vehicle.model.trim() ||
+            !["Hatchback", "SUV", "Premium", "Two-Wheeler", "EV"].includes(vehicle.type) ||
+            !Number.isFinite(vehicle.price) || vehicle.price <= 0 || !Number.isFinite(vehicle.age) ||
+            vehicle.age < 0 || !Number.isFinite(vehicle.seats) || vehicle.seats < 1 ||
+            !Number.isFinite(vehicle.range) || vehicle.range < 1 || vehicleIds.has(vehicle.id)) return false;
+        vehicleIds.add(vehicle.id);
+      }
+      const bookingIds = new Set();
+      for (const booking of candidate.bookings) {
+        if (!booking || typeof booking.id !== "string" || !booking.id || bookingIds.has(booking.id) ||
+            !vehicleIds.has(booking.vehicleId) || typeof booking.customer !== "string" || !booking.customer.trim() ||
+            !validDate(booking.start) || !validDate(booking.end) || booking.start > booking.end ||
+            (booking.start === booking.end && !(booking.plan === "Hourly" && validDateTime(booking.startAt) && validDateTime(booking.endAt))) ||
+            ((booking.startAt || booking.endAt) && (!validDateTime(booking.startAt) || !validDateTime(booking.endAt) || booking.startAt >= booking.endAt)) ||
+            !Number.isFinite(booking.charge) || booking.charge < 0 || !Number.isFinite(booking.deposit) ||
+            booking.deposit < 0 || typeof booking.returned !== "boolean") return false;
+        bookingIds.add(booking.id);
+      }
+      return candidate.extraRevenue.every((entry) => entry && validDate(entry.date) &&
+        Number.isFinite(entry.amount) && entry.amount >= 0 && typeof entry.kind === "string");
+    };
+    const normalizeState = (candidate) => {
+      candidate.blacklistedCustomers ||= [];
+      candidate.maintenanceRecords ||= [];
+      const odometers = { "HAT-101": 42850, "SUV-201": 28100, "HAT-102": 33500, "SCO-301": 19200, "EV-401": 14750, "PRE-501": 21600 };
+      for (const vehicle of candidate.vehicles) {
+        vehicle.odometerKm ??= odometers[vehicle.id] || 0;
+        vehicle.maintenanceStatus ||= "Ready";
+      }
+      return candidate;
+    };
+    const updateStorageStatus = (message, hasError = false) => {
+      const status = document.querySelector("#storage-status");
+      status.textContent = message;
+      status.classList.toggle("error", hasError);
+    };
+    const localStateKey = "roadwise_local_state";
+    let state = seedData();
+    let dataReady = true;
+    let isSaving = false;
+    const savedState = localStorage.getItem(localStateKey);
+    if (savedState) {
+      try {
+        const local = JSON.parse(savedState);
+        if (isValidState(local)) state = normalizeState(local);
+      } catch (error) {
+        console.error("Roadwise could not read local demo data.", error);
+      }
+    }
+    const byId = (id) => state.vehicles.find((vehicle) => vehicle.id === id);
+    const bookingsFor = (vehicleId) => state.bookings.filter((booking) => booking.vehicleId === vehicleId);
+    const slotStart = (booking) => booking.startAt || `${booking.start}T00:00`;
+    const slotEnd = (booking) => booking.endAt || `${booking.end}T00:00`;
+    const slotValue = (value) => value.includes("T") ? value : `${value}T00:00`;
+    const dateOverlaps = (start, end, booking) => slotValue(start) < slotEnd(booking) && slotStart(booking) < slotValue(end);
+    const conflicts = (vehicleId, start, end, ignoreId = "") => bookingsFor(vehicleId).some((booking) => booking.id !== ignoreId && dateOverlaps(start, end, booking));
+    const completedCount = (customer) => state.bookings.filter((booking) => booking.customer.toLowerCase() === customer.trim().toLowerCase() && booking.returned).length;
+    const tierInfo = (customer) => {
+      const count = completedCount(customer);
+      if (count >= 10) return { name: "Platinum", discount: 0.15, className: "platinum" };
+      if (count >= 5) return { name: "Gold", discount: 0.10, className: "gold" };
+      if (count >= 2) return { name: "Silver", discount: 0.05, className: "silver" };
+      return { name: "Standard", discount: 0, className: "" };
+    };
+    const isActive = (booking) => !booking.returned && slotStart(booking) <= nowIST() && slotEnd(booking) > nowIST();
+    const isOverdue = (booking) => !booking.returned && slotEnd(booking) <= nowIST();
+    const isUpcoming = (booking) => !booking.returned && slotStart(booking) > nowIST();
+    const demandFor = (start, end) => {
+      const count = state.vehicles.length;
+      if (!count) return 0;
+      let peak = 0;
+      for (let day = start; day < end; day = addDays(day, 1)) {
+        peak = Math.max(peak, state.bookings.filter((booking) => booking.start <= day && day < booking.end).length / count);
+      }
+      return peak;
+    };
+    const quoteFor = (vehicle, start, days, customer = "", plan = "Daily", kmCap = "120 km/day") => {
+      const duration = days;
+      days = plan === "Hourly" ? 1 : duration;
+      const demand = demandFor(start, addDays(start, days));
+      const ageFactor = Math.max(0.7, 1 - vehicle.age * 0.02);
+      const kmCapMap = { "120 km/day": 120, "300 km/day": 300, "Unlimited km": Number.POSITIVE_INFINITY };
+      let sum = 0;
+      for (let i = 0; i < days; i++) {
+        const date = new Date(addDays(start, i) + "T00:00:00");
+        const weekend = date.getDay() === 0 || date.getDay() === 6;
+        const peak = [5, 6, 7, 11].includes(date.getMonth());
+        let dayPrice = vehicle.price * ageFactor * (1 + Math.min(0.5, demand * 0.5));
+        if (vehicle.type === "Premium") dayPrice *= 1.35;
+        if (weekend) dayPrice *= 1.2;
+        if (peak) dayPrice *= 1.25;
+        sum += dayPrice;
+      }
+      const dailyRate = sum / days;
+      const fullWeeks = Math.floor(days / 7);
+      const fullMonths = Math.floor(days / 30);
+      const planBase = plan === "Hourly" ? dailyRate * duration / 10
+        : plan === "Weekly" ? dailyRate * (fullWeeks * 6.8 + days % 7)
+          : plan === "Monthly" ? dailyRate * (fullMonths * 22 + days % 30)
+            : sum;
+      const capLimit = kmCapMap[kmCap] || 120;
+      const includedKm = Number.isFinite(capLimit) ? capLimit * (plan === "Hourly" ? duration / 24 : days) : 0;
+      const excessCharge = 0;
+      const discount = tierInfo(customer).discount;
+      const rental = planBase * (1 - discount) + (vehicle.type === "EV" ? 250 : 0) + excessCharge;
+      const deposit = vehicle.securityDeposit || (vehicle.type === "Premium" ? 15000 : vehicle.type === "SUV" ? 10000 : vehicle.type === "Two-Wheeler" ? 2000 : 3000);
+      const due = rental + deposit;
+      return { base: planBase, discount, rental, deposit, due, excessCharge, includedKm };
+    };
+    const revenueRows = () => {
+      const rows = state.bookings.map((booking) => ({ date: booking.created || booking.start, amount: booking.charge, kind: "Rental" }));
+      rows.push(...state.extraRevenue);
+      return rows;
+    };
+    const monthlyRevenue = () => {
+      const map = new Map();
+      for (const row of revenueRows()) {
+        const key = row.date.slice(0, 7);
+        map.set(key, (map.get(key) || 0) + row.amount);
+      }
+      return map;
+    };
+    const imageUrl = (vehicle) => vehicle.photoUrl || vehiclePhotos[vehicle.model]?.src || images[vehicle.image] || images.car;
+    const imageCreditUrl = (vehicle) => vehicle.photoCreditUrl || vehiclePhotos[vehicle.model]?.credit || "";
+    const renderPhotoCredits = () => document.querySelectorAll("#vehicle-grid .vehicle-card").forEach((card) => {
+      const image = card.querySelector(".vehicle-image img");
+      const vehicle = state.vehicles.find((item) => item.model === image?.alt);
+      const creditUrl = vehicle && imageCreditUrl(vehicle);
+      if (!creditUrl || card.querySelector(".image-credit")) return;
+      const link = document.createElement("a");
+      link.className = "image-credit";
+      link.href = creditUrl;
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.textContent = "Photo source";
+      card.querySelector(".vehicle-image").append(link);
+    });
+    const vehicleStatus = (vehicle) => bookingsFor(vehicle.id).some((booking) => !booking.returned && dateOverlaps(todayISO, addDays(todayISO, 1), booking));
+    const statusMarkup = (booking) => {
+      if (booking.returned) return '<span class="tier">Returned</span>';
+      if (isOverdue(booking)) return '<span class="status booked">Overdue</span>';
+      if (isActive(booking)) return '<span class="status booked">In progress</span>';
+      return '<span class="status">Upcoming</span>';
+    };
+    const renderMetrics = () => {
+      const active = state.bookings.filter(isActive).length;
+      const overdue = state.bookings.filter(isOverdue).length;
+      const pendingDeposits = state.bookings.filter((booking) => !booking.returned).reduce((sum, booking) => sum + (booking.deposit || 0), 0);
+      const occupiedVehicles = new Set(state.bookings.filter((booking) => isActive(booking) || isOverdue(booking)).map((booking) => booking.vehicleId));
+      const utilization = state.vehicles.length ? Math.round(occupiedVehicles.size / state.vehicles.length * 100) : 0;
+      const revenue = revenueRows().filter((row) => row.date === todayISO).reduce((sum, row) => sum + row.amount, 0);
+      const cards = [
+        ["Active Rentals", active, "Currently on the road", "key"],
+        ["Total Fleet", state.vehicles.length, "Across all classes", "car"],
+        ["Fleet Utilization", `${utilization}%`, "Out of total fleet", "chart"],
+        ["Today's Revenue", money(revenue), "Charges recorded today", "cash"],
+        ["Pending Deposits", money(pendingDeposits), "Refundable customer deposits", "cash"],
+        ["Overdue Vehicles", overdue, "Vehicles beyond return date", "chart"]
+      ];
+      const icons = {
+        car: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13.5h18l-1.7-5.2a2 2 0 0 0-1.9-1.3H6.6a2 2 0 0 0-1.9 1.3L3 13.5Z"/><path d="M5 14v4m14-4v4M3 16h18M7 18h.01M17 18h.01"/></svg>',
+        key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="15" r="5"/><path d="m11.5 11.5 8-8L22 6l-2 2 1 1-2 2-1-1-3 3"/></svg>',
+        chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h17M8 16v-4m5 4V7m5 9v-7"/></svg>',
+        cash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M7 9h.01M17 15h.01"/></svg>'
+      };
+      document.querySelector("#metrics").innerHTML = cards.map((card) => `<article class="metric"><div class="metric-top"><span>${card[0]}</span><span class="metric-icon">${icons[card[3]]}</span></div><div class="metric-value">${card[1]}</div><div class="metric-foot">${card[2]}</div></article>`).join("");
+    };
+    const renderChart = () => {
+      const count = Number(document.querySelector("#revenue-period").value || 7);
+      const totals = monthlyRevenue();
+      const months = [];
+      for (let i = count - 1; i >= 0; i--) {
+        const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        months.push([key, totals.get(key) || 0]);
+      }
+      const max = Math.max(1, ...months.map((entry) => entry[1]));
+      const total = months.reduce((sum, entry) => sum + entry[1], 0);
+      document.querySelector("#revenue-total").innerHTML = `${money(total)} <small>period revenue</small>`;
+      document.querySelector("#revenue-chart").innerHTML = months.map(([key, amount], index) => `<div class="bar-column" title="${key}: ${moneyExact(amount)}"><div class="bar ${index === months.length - 1 ? "current" : ""}" style="height:${Math.max(4, amount / max * 108)}px"></div><div class="bar-label">${monthLabel(key)}</div></div>`).join("");
+    };
+    const renderFleetAvailability = () => {
+      const list = state.vehicles.slice(0, 5);
+      document.querySelector("#availability-list").innerHTML = list.map((vehicle) => `<div class="fleet-row"><div class="fleet-thumb"><img src="${imageUrl(vehicle)}" alt="" loading="lazy"></div><div><div class="fleet-name">${escapeHTML(vehicle.model)}</div><div class="fleet-type">${escapeHTML(vehicle.type)} · ${escapeHTML(vehicle.registrationNumber || vehicle.id)}</div></div><span class="status ${vehicleStatus(vehicle) ? "booked" : ""}">${vehicleStatus(vehicle) ? "On rent" : "Available"}</span></div>`).join("") || '<div class="empty">Add vehicles to your fleet to see availability.</div>';
+    };
+    const renderRank = () => {
+      const sorted = state.vehicles.map((vehicle) => ({ vehicle, count: bookingsFor(vehicle.id).length })).sort((a, b) => b.count - a.count).slice(0, 5);
+      document.querySelector("#rank-list").innerHTML = sorted.map((entry, index) => `<div class="rank-row"><div class="rank-number">0${index + 1}</div><img class="rank-img" src="${imageUrl(entry.vehicle)}" alt="" loading="lazy"><div><div class="rank-model">${escapeHTML(entry.vehicle.model)}</div><div class="rank-type">${escapeHTML(entry.vehicle.type)}</div></div><div class="rank-count">${entry.count}×</div></div>`).join("") || '<div class="empty">No rentals recorded.</div>';
+    };
+    const rentalRow = (booking, compact = false) => {
+      const vehicle = byId(booking.vehicleId);
+      const customerTier = tierInfo(booking.customer);
+      const vehicleLabel = vehicle ? vehicle.model : booking.vehicleId;
+      if (compact) return `<tr><td>${escapeHTML(booking.customer)}<span class="table-muted">${booking.id}</span></td><td>${escapeHTML(vehicleLabel)}</td><td>${dateLabel(booking.start)} – ${dateLabel(booking.end)}</td><td>${statusMarkup(booking)}</td><td>${booking.returned ? `<span class="tier ${customerTier.className}">${customerTier.name}</span>` : ""}</td></tr>`;
+      const action = booking.returned ? '<span class="table-muted">Complete</span>' : `<button class="button small" data-return="${booking.id}">Check in</button>`;
+      const durationLabel = booking.plan === "Hourly" ? `${booking.duration || 1} hours` : `${Math.max(1, Math.round((new Date(booking.end) - new Date(booking.start)) / 86400000))} days`;
+      const dateRange = booking.plan === "Hourly" ? dateLabel(booking.start) : `${dateLabel(booking.start)} – ${dateLabel(booking.end)}`;
+      return `<tr><td><span class="booking-code">${booking.id}</span></td><td>${escapeHTML(booking.customer)}<span class="table-muted"><span class="tier ${customerTier.className}">${customerTier.name}</span></span></td><td>${escapeHTML(vehicleLabel)}<span class="table-muted">${escapeHTML(booking.vehicleId)}</span></td><td>${dateRange}<span class="table-muted">${durationLabel}</span></td><td>${moneyExact(booking.charge)}</td><td>${statusMarkup(booking)}</td><td>${action}</td></tr>`;
+    };
+    const renderRecent = () => {
+      const rows = [...state.bookings].sort((a, b) => b.created.localeCompare(a.created)).slice(0, 5);
+      document.querySelector("#recent-rentals").innerHTML = rows.map((booking) => rentalRow(booking, true)).join("") || '<tr><td colspan="5">No bookings yet.</td></tr>';
+    };
+    const renderFleet = () => {
+      const query = document.querySelector("#fleet-search").value.trim().toLowerCase();
+      const type = document.querySelector("#fleet-type").value;
+      const status = document.querySelector("#fleet-status").value;
+      const filtered = state.vehicles.filter((vehicle) => {
+        const matchesQuery = `${vehicle.id} ${vehicle.model} ${vehicle.type} ${vehicle.registrationNumber || ""}`.toLowerCase().includes(query);
+        return matchesQuery && (type === "all" || vehicle.type === type) && (status === "all" || (status === "booked") === vehicleStatus(vehicle));
+      });
+      document.querySelector("#vehicle-grid").innerHTML = filtered.map((vehicle) => {
+        const booked = vehicleStatus(vehicle);
+        const rule = vehicle.type === "Two-Wheeler" ? "Helmet deposit ₹2000" : vehicle.type === "EV" ? "₹250 charging fee" : vehicle.type === "Premium" ? "Premium class" : "Standard class";
+        return `<article class="vehicle-card"><div class="vehicle-image"><img src="${imageUrl(vehicle)}" alt="${escapeHTML(vehicle.model)}" loading="lazy"><span class="vehicle-tag">${escapeHTML(vehicle.type)} · ${escapeHTML(vehicle.registrationNumber || vehicle.id)}</span></div><div class="vehicle-card-body"><div class="vehicle-card-title"><h3>${escapeHTML(vehicle.model)}</h3><div class="vehicle-price">${moneyExact(vehicle.price)}<small> / day</small></div></div><div class="vehicle-meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m1-11a3 3 0 0 1 0 6m2 1a5 5 0 0 1 3 4v1"/></svg>${vehicle.seats} seats</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>${vehicle.range} km range</span><span>${vehicle.age}y old</span></div><div class="vehicle-bottom"><span class="${booked ? "status booked" : "status"}">${booked ? "On rent" : "Available"} · ${rule}</span>${booked ? "" : `<button class="button small" data-book-vehicle="${vehicle.id}">Book</button>`}</div></div></article>`;
+      }).join("") || '<div class="empty">No vehicles match those filters.</div>';
+    };
+    let rentalFilter = "all";
+    const renderRentals = () => {
+      const query = document.querySelector("#rental-search").value.trim().toLowerCase();
+      const results = [...state.bookings].filter((booking) => {
+        const vehicle = byId(booking.vehicleId);
+        const haystack = `${booking.id} ${booking.customer} ${booking.vehicleId} ${vehicle ? vehicle.model : ""}`.toLowerCase();
+        const statusMatches = rentalFilter === "all" || (rentalFilter === "active" && isActive(booking)) || (rentalFilter === "overdue" && isOverdue(booking)) || (rentalFilter === "upcoming" && isUpcoming(booking)) || (rentalFilter === "returned" && booking.returned);
+        return haystack.includes(query) && statusMatches;
+      }).sort((a, b) => b.created.localeCompare(a.created));
+      document.querySelector("#all-rentals").innerHTML = results.map((booking) => rentalRow(booking)).join("") || '<tr><td colspan="7" style="padding:24px;text-align:center;color:#78817d">No rentals match this filter.</td></tr>';
+    };
+    const renderReports = () => {
+      const totals = monthlyRevenue();
+      const ordered = [...totals.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+      const recent = ordered.slice(-6);
+      const max = Math.max(1, ...recent.map((entry) => entry[1]));
+      document.querySelector("#report-total").textContent = money(ordered.reduce((sum, entry) => sum + entry[1], 0));
+      document.querySelector("#report-bars").innerHTML = recent.map(([month, amount]) => `<div class="report-bar-row"><span>${monthLabel(month)}</span><div class="report-track"><div class="report-fill" style="width:${Math.max(2, amount / max * 100)}%"></div></div><span class="report-value">${money(amount)}</span></div>`).join("") || '<div class="report-note">No revenue recorded yet.</div>';
+      const active = state.bookings.filter(isActive).length;
+      const overdue = state.bookings.filter(isOverdue).length;
+      const upcoming = state.bookings.filter(isUpcoming).length;
+      const returned = state.bookings.filter((booking) => booking.returned).length;
+      const occupiedVehicles = new Set(state.bookings.filter((booking) => isActive(booking) || isOverdue(booking)).map((booking) => booking.vehicleId));
+      const upcomingVehicles = new Set(state.bookings.filter(isUpcoming).map((booking) => booking.vehicleId));
+      const utilization = state.vehicles.length ? Math.round(occupiedVehicles.size / state.vehicles.length * 100) : 0;
+      document.querySelector("#report-util").textContent = `${utilization}%`;
+      document.querySelector("#report-activity").innerHTML = [["On rent", occupiedVehicles.size, "#ed6847"], ["Upcoming", upcomingVehicles.size, "#81b998"], ["Available", Math.max(0, state.vehicles.length - occupiedVehicles.size - upcomingVehicles.size), "#cde9d5"]].map(([label, value, color]) => `<div class="report-bar-row"><span>${label}</span><div class="report-track"><div class="report-fill" style="width:${Math.min(100, state.vehicles.length ? value / state.vehicles.length * 100 : 0)}%;background:${color}"></div></div><span class="report-value">${value}</span></div>`).join("");
+      document.querySelector("#report-activity-stats").innerHTML = [["In progress", active], ["Overdue", overdue], ["Upcoming", upcoming], ["Returned", returned]].map(([label, value]) => `<div class="report-stat"><strong>${value}</strong><span>${label}</span></div>`).join("");
+      const customers = new Set(state.bookings.map((booking) => booking.customer));
+      const tiers = { Silver: 0, Gold: 0, Platinum: 0 };
+      for (const customer of customers) {
+        const tier = tierInfo(customer).name;
+        if (tier in tiers) tiers[tier]++;
+      }
+      document.querySelector("#loyalty-stats").innerHTML = Object.entries(tiers).map(([tier, count]) => `<div class="report-stat"><strong>${count}</strong><span>${tier} customers · ${tier === "Silver" ? "5%" : tier === "Gold" ? "10%" : "15%"} off</span></div>`).join("");
+    };
+    const renderOperations = () => {
+      const alerts = [];
+      for (const vehicle of state.vehicles) {
+        const daysToPuc = vehicle.pucExpiry ? Math.ceil((Date.parse(`${vehicle.pucExpiry}T00:00:00Z`) - Date.parse(`${todayISO}T00:00:00Z`)) / 86400000) : -1;
+        if (daysToPuc <= 30) alerts.push({ level: daysToPuc < 0 ? "Action" : "Watch", title: `${vehicle.model} · ${daysToPuc < 0 ? "PUC expired" : "PUC renewal due"}`, detail: vehicle.pucExpiry ? `Valid through ${dateLabel(vehicle.pucExpiry)}` : "No PUC validity date" });
+        if (vehicle.fitnessCertificate !== "Valid") alerts.push({ level: "Action", title: `${vehicle.model} · fitness certificate ${vehicle.fitnessCertificate || "missing"}`, detail: vehicle.registrationNumber || vehicle.id });
+        if (!vehicle.permitStatus || vehicle.permitStatus.toLowerCase().includes("expired")) alerts.push({ level: "Action", title: `${vehicle.model} · permit review`, detail: vehicle.permitStatus || "Permit status missing" });
+        if ((vehicle.fastagBalance || 0) < 300) alerts.push({ level: "Watch", title: `${vehicle.model} · low Fastag balance`, detail: `${money(vehicle.fastagBalance || 0)} remaining` });
+        if (vehicle.maintenanceStatus !== "Ready" || vehicle.odometerKm >= vehicle.serviceDueKm) alerts.push({ level: "Action", title: `${vehicle.model} · maintenance due`, detail: `${vehicle.odometerKm} / ${vehicle.serviceDueKm} km` });
+      }
+      document.querySelector("#ops-alert-count").textContent = `${alerts.length} active fleet alerts`;
+      document.querySelector("#operations-alerts").innerHTML = alerts.map((alert) => `<div class="alert-item"><div><strong>${escapeHTML(alert.title)}</strong><small>${escapeHTML(alert.detail)}</small></div><span class="alert-severity ${alert.level === "Watch" ? "watch" : ""}">${alert.level}</span></div>`).join("") || '<div class="empty">No compliance or maintenance alerts.</div>';
+      const customerLatest = new Map();
+      for (const booking of [...state.bookings].sort((a, b) => b.created.localeCompare(a.created))) if (!customerLatest.has(booking.customer)) customerLatest.set(booking.customer, booking);
+      const blocklisted = new Set((state.blacklistedCustomers || []).map((entry) => entry.name.toLowerCase()));
+      document.querySelector("#operations-drivers").innerHTML = [...customerLatest.entries()].map(([name, booking]) => {
+        const isBlocked = blocklisted.has(name.toLowerCase());
+        const kycStatus = booking.kyc?.verificationStatus || "Legacy record";
+        const identity = booking.kyc?.digiLockerReference ? "DigiLocker ref on file" : booking.kyc?.dl ? "Licence on file" : "Documents missing";
+        return `<tr><td>${escapeHTML(name)}</td><td>${escapeHTML(identity)}<small class="table-muted">${escapeHTML(kycStatus)}</small></td><td><span class="${isBlocked ? "status booked" : "status"}">${isBlocked ? "Blocklisted" : "Allowed"}</span></td><td><button class="button small" data-blacklist="${escapeHTML(name)}" data-blocked="${isBlocked}">${isBlocked ? "Unblock" : "Block"}</button></td></tr>`;
+      }).join("") || '<tr><td colspan="4">No driver records yet.</td></tr>';
+      document.querySelector("#operations-vehicles").innerHTML = state.vehicles.map((vehicle) => `<tr><td>${escapeHTML(vehicle.model)}<small class="table-muted">${escapeHTML(vehicle.type)}</small></td><td>${escapeHTML(vehicle.registrationNumber || "Not set")}</td><td>${vehicle.pucExpiry ? dateLabel(vehicle.pucExpiry) : "Missing"}</td><td>${escapeHTML(vehicle.permitStatus || "Missing")}</td><td>${escapeHTML(vehicle.fitnessCertificate || "Missing")}</td><td>${money(vehicle.fastagBalance || 0)}<small class="table-muted">${escapeHTML(vehicle.fastagId || "No tag")}</small></td><td>${vehicle.odometerKm || 0} / ${vehicle.serviceDueKm || "—"} km</td><td><button class="button small" data-maintenance="${escapeHTML(vehicle.id)}">${vehicle.maintenanceStatus === "Due" ? "Mark ready" : "Log service"}</button></td></tr>`).join("");
+      document.querySelectorAll("#operations-drivers tr").forEach((row) => {
+        const name = row.cells[0]?.textContent;
+        const booking = state.bookings.find((item) => item.customer === name && item.kyc);
+        if (!booking || booking.kyc.verificationStatus === "Manual documents verified" || booking.kyc.verificationStatus === "DigiLocker verified") return;
+        const button = document.createElement("button");
+        button.className = "button small";
+        button.dataset.verifyKyc = name;
+        button.textContent = "Verify";
+        row.cells[3]?.append(button);
+      });
+      document.querySelectorAll("#operations-vehicles tr").forEach((row) => {
+        const vehicle = state.vehicles.find((item) => item.model === row.cells[0]?.childNodes[0]?.textContent);
+        if (!vehicle?.fastagId) return;
+        const button = document.createElement("button");
+        button.className = "button small";
+        button.dataset.fastagTopup = vehicle.id;
+        button.textContent = "Top up";
+        row.cells[7]?.append(button);
+      });
+    };
+    const render = () => {
+      renderMetrics(); renderChart(); renderFleetAvailability(); renderRecent(); renderRank(); renderFleet(); renderPhotoCredits(); renderRentals(); renderReports(); renderOperations();
+    };
+    const showToast = (message) => {
+      const root = document.querySelector("#toast-root");
+      root.innerHTML = `<div class="toast">${escapeHTML(message)}</div>`;
+      window.setTimeout(() => { root.innerHTML = ""; }, 2800);
+    };
+    const cloneState = () => JSON.parse(JSON.stringify(state));
+    const saveChanges = async (previousState) => {
+      if (isSaving) {
+        state = previousState;
+        render();
+        showToast("A save is already in progress. Try again shortly.");
+        return false;
+      }
+      isSaving = true;
+      localStorage.setItem(localStateKey, JSON.stringify(state));
+      updateStorageStatus("Saved locally");
+      isSaving = false;
+      return true;
+    };
+    const showView = (name) => {
+      document.querySelectorAll(".screen").forEach((screen) => screen.classList.toggle("active", screen.id === `screen-${name}`));
+      document.querySelectorAll(".nav button[data-view]").forEach((button) => button.classList.toggle("active", button.dataset.view === name));
+      const titles = { overview: "Overview", fleet: "Fleet", rentals: "Rentals", reports: "Reports", operations: "Operations" };
+      document.querySelector("#crumb-current").textContent = titles[name];
+    };
+    const makeField = (id, label, type = "number") => {
+      const field = document.createElement("div");
+      field.className = "field";
+      field.innerHTML = `<label for="${id}">${label}</label><input id="${id}" type="${type}">`;
+      return field;
+    };
+    const setupEnhancedForms = () => {
+      const bookingGrid = document.querySelector("#booking-form .form-grid");
+      const pickupTime = makeField("booking-start-time", "Pickup time (IST)", "time");
+      pickupTime.querySelector("input").required = true;
+      document.querySelector("#booking-start").parentElement.after(pickupTime);
+      const digiLocker = makeField("booking-digilocker", "DigiLocker reference", "text");
+      digiLocker.querySelector("input").placeholder = "Reference ID only";
+      const kycField = document.createElement("div");
+      kycField.className = "field";
+      kycField.innerHTML = '<label for="booking-kyc-status">KYC review</label><select id="booking-kyc-status"><option>Pending review</option><option>Manual documents verified</option><option>DigiLocker verified</option></select>';
+      bookingGrid.append(digiLocker, kycField);
+      document.querySelector('label[for="booking-aadhaar"]').textContent = "Aadhaar last 4 digits";
+      const aadhaar = document.querySelector("#booking-aadhaar");
+      aadhaar.placeholder = "1234";
+      aadhaar.inputMode = "numeric";
+      aadhaar.pattern = "[0-9]{4}";
+      aadhaar.minLength = 4;
+      aadhaar.maxLength = 4;
+      aadhaar.required = true;
+      document.querySelector("#booking-dl").required = true;
+      document.querySelector("#booking-emergency").required = true;
+      document.querySelector('label[for="booking-days"]').textContent = "Duration (days, or hours for hourly)";
+      const returnGrid = document.querySelector("#return-form .form-grid");
+      const odoField = makeField("return-odometer", "Return odometer (km)");
+      odoField.querySelector("input").min = "0";
+      odoField.querySelector("input").required = true;
+      const tollField = makeField("return-toll", "Tolls to deduct (₹)");
+      tollField.querySelector("input").min = "0";
+      tollField.querySelector("input").step = "0.01";
+      tollField.querySelector("input").value = "0";
+      returnGrid.append(odoField, tollField);
+      const excessCharge = document.querySelector("#excess-km-charge");
+      excessCharge.readOnly = true;
+      excessCharge.value = 0;
+      excessCharge.parentElement.querySelector("label").textContent = "Calculated excess-km charge (₹)";
+      const settlement = document.createElement("div");
+      settlement.className = "quote-box";
+      settlement.id = "return-settlement";
+      returnGrid.parentElement.insertBefore(settlement, returnGrid.nextSibling);
+      ["#return-odometer", "#return-toll", "#damage-cost", "#return-date"].forEach((selector) =>
+        document.querySelector(selector).addEventListener("input", updateReturnSettlement));
+      document.querySelector("#booking-plan").addEventListener("change", () => {
+        const hourly = document.querySelector("#booking-plan").value === "Hourly";
+        document.querySelector("#booking-start-time").required = hourly;
+        document.querySelector('label[for="booking-days"]').textContent = hourly ? "Duration (hours)" : "Duration (days)";
+        updateQuote();
+      });
+    };
+    const openBooking = (vehicleId = "") => {
+      const select = document.querySelector("#booking-vehicle");
+      const availableVehicles = state.vehicles;
+      select.innerHTML = availableVehicles.map((vehicle) => `<option value="${escapeHTML(vehicle.id)}">${escapeHTML(vehicle.model)} · ${escapeHTML(vehicle.registrationNumber || vehicle.id)} · ${money(vehicle.price)}/day</option>`).join("");
+      if (vehicleId && availableVehicles.some((vehicle) => vehicle.id === vehicleId)) select.value = vehicleId;
+      document.querySelector("#booking-start").value = todayISO;
+      document.querySelector("#booking-start").min = todayISO;
+      document.querySelector("#booking-start-time").value = nowIST().slice(11, 16);
+      document.querySelector("#booking-days").value = 3;
+      document.querySelector("#booking-customer").value = "";
+      document.querySelector("#booking-dl").value = "";
+      document.querySelector("#booking-aadhaar").value = "";
+      document.querySelector("#booking-emergency").value = "";
+      document.querySelector("#booking-digilocker").value = "";
+      document.querySelector("#booking-kyc-status").value = "Pending review";
+      document.querySelector("#booking-plan").value = "Daily";
+      document.querySelector("#booking-start-time").required = false;
+      document.querySelector('label[for="booking-days"]').textContent = "Duration (days)";
+      document.querySelector("#booking-error").textContent = "";
+      updateQuote();
+      document.querySelector("#booking-dialog").showModal();
+    };
+    const updateQuote = () => {
+      const vehicle = byId(document.querySelector("#booking-vehicle").value);
+      const start = document.querySelector("#booking-start").value;
+      const days = Number(document.querySelector("#booking-days").value);
+      const customer = document.querySelector("#booking-customer").value;
+      const plan = document.querySelector("#booking-plan").value;
+      const kmCap = document.querySelector("#booking-km-cap").value;
+      if (!vehicle || !start || !Number.isFinite(days) || days < 1) {
+        document.querySelector("#quote-box").innerHTML = '<span>Choose a vehicle and rental length</span><strong>—</strong>';
+        return;
+      }
+      const quote = quoteFor(vehicle, start, days, customer, plan, kmCap);
+      const startAt = `${start}T${document.querySelector("#booking-start-time").value || "00:00"}`;
+      document.querySelector("#booking-return").value = plan === "Hourly" ? `${addHoursIST(startAt, days).replace("T", " ")} IST` : `${addDays(start, days)} (return day not charged)`;
+      const tier = tierInfo(customer);
+      const deposit = vehicle.securityDeposit || quote.deposit || 3000;
+      document.querySelector("#quote-box").innerHTML = `<span>Dynamic rental price</span><strong>${moneyExact(quote.base)}</strong><span>${tier.name} loyalty discount</span><strong>−${moneyExact(quote.base * quote.discount)}</strong><span>Included distance</span><strong>${kmCap === "Unlimited km" ? "Unlimited" : `${quote.includedKm} km`}</strong><span>Excess distance rate</span><strong>${kmCap === "Unlimited km" ? "Included" : `${money(12)}/km at return`}</strong><span>Security deposit</span><strong>${moneyExact(deposit)}</strong><span class="quote-total">Due at reservation</span><strong class="quote-total">${moneyExact(quote.due)}</strong>`;
+    };
+    const updateReturnSettlement = () => {
+      const booking = state.bookings.find((item) => item.id === document.querySelector("#return-booking-id").value);
+      if (!booking) return;
+      const vehicle = byId(booking.vehicleId);
+      const startOdometer = Number(booking.startOdometer ?? vehicle?.odometerKm ?? 0);
+      const returnOdometer = Number(document.querySelector("#return-odometer").value || startOdometer);
+      const drivenKm = Math.max(0, returnOdometer - startOdometer);
+      const rentalDays = Math.max(1, Math.round((new Date(booking.end) - new Date(booking.start)) / 86400000));
+      const capPerDay = booking.kmCap === "Unlimited km" ? Number.POSITIVE_INFINITY : Number.parseInt(booking.kmCap, 10) || 120;
+      const includedKm = booking.kmCap === "Unlimited km" ? Number.POSITIVE_INFINITY : capPerDay * (booking.plan === "Hourly" ? (booking.duration || 1) / 24 : rentalDays);
+      const excessCharge = Number.isFinite(includedKm) ? Math.max(0, drivenKm - includedKm) * 12 : 0;
+      const lateDays = Math.max(0, Math.round((new Date(document.querySelector("#return-date").value + "T00:00:00") - new Date(booking.end + "T00:00:00")) / 86400000));
+      const latePenalty = lateDays * (booking.charge / rentalDays) * 1.5;
+      const toll = Math.max(0, Number(document.querySelector("#return-toll").value) || 0);
+      const damage = Math.max(0, Number(document.querySelector("#damage-cost").value) || 0);
+      const charges = excessCharge + latePenalty + toll + damage;
+      const deposit = Number(booking.deposit || 0);
+      document.querySelector("#excess-km-charge").value = excessCharge.toFixed(2);
+      document.querySelector("#return-settlement").innerHTML = `<span>Distance driven / included</span><strong>${drivenKm} / ${Number.isFinite(includedKm) ? includedKm : "Unlimited"} km</strong><span>Late fee · toll · damage</span><strong>${money(charges)}</strong><span>Deposit refund</span><strong>${money(Math.max(0, deposit - charges))}</strong><span class="quote-total">Additional amount due</span><strong class="quote-total">${money(Math.max(0, charges - deposit))}</strong>`;
+    };
+    const openReturn = (id) => {
+      const booking = state.bookings.find((item) => item.id === id);
+      if (!booking) return;
+      const vehicle = byId(booking.vehicleId);
+      document.querySelector("#return-booking-id").value = id;
+      document.querySelector("#return-booking-caption").textContent = `${booking.id} · ${booking.customer} · ${vehicle ? vehicle.model : booking.vehicleId}`;
+      document.querySelector("#return-date").value = todayISO;
+      document.querySelector("#return-date").min = booking.start;
+      document.querySelector("#return-odometer").value = booking.startOdometer ?? vehicle?.odometerKm ?? 0;
+      document.querySelector("#return-toll").value = 0;
+      document.querySelector("#return-error").textContent = "";
+      document.querySelector("#damage-cost").value = 0;
+      document.querySelector("#excess-km-charge").value = 0;
+      document.querySelector("#damage-description").value = "";
+      updateReturnSettlement();
+      document.querySelector("#return-dialog").showModal();
+    };
+
+    document.querySelectorAll(".nav button[data-view]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.view)));
+    document.querySelectorAll("[data-view-link]").forEach((button) => button.addEventListener("click", () => showView(button.dataset.viewLink)));
+    document.querySelectorAll("[data-action]").forEach((button) => button.addEventListener("click", () => {
+      const action = button.dataset.action;
+      if (action === "book") openBooking();
+      if (action === "recommend") document.querySelector("#recommend-dialog").showModal();
+      if (action === "add-vehicle") document.querySelector("#vehicle-dialog").showModal();
+    }));
+    document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => button.closest("dialog").close()));
+    document.querySelectorAll("dialog").forEach((dialog) => dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); }));
+    document.querySelector("#revenue-period").addEventListener("change", renderChart);
+    ["#fleet-search", "#fleet-type", "#fleet-status"].forEach((selector) => document.querySelector(selector).addEventListener("input", renderFleet));
+    document.querySelector("#rental-search").addEventListener("input", renderRentals);
+    document.querySelector("#rental-filters").addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-filter]");
+      if (!button) return;
+      rentalFilter = button.dataset.filter;
+      document.querySelectorAll("#rental-filters button").forEach((item) => item.classList.toggle("active", item === button));
+      renderRentals();
+    });
+    setupEnhancedForms();
+    ["#booking-vehicle", "#booking-start", "#booking-start-time", "#booking-days", "#booking-customer", "#booking-plan", "#booking-km-cap"].forEach((selector) => document.querySelector(selector).addEventListener("input", updateQuote));
+    document.querySelector("#booking-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const vehicle = byId(document.querySelector("#booking-vehicle").value);
+      const customer = document.querySelector("#booking-customer").value.trim();
+      const dl = document.querySelector("#booking-dl").value.trim();
+      const aadhaarLast4 = document.querySelector("#booking-aadhaar").value.trim();
+      const emergency = document.querySelector("#booking-emergency").value.trim();
+      const digiLockerReference = document.querySelector("#booking-digilocker").value.trim();
+      const kycStatus = document.querySelector("#booking-kyc-status").value;
+      const start = document.querySelector("#booking-start").value;
+      const duration = Number(document.querySelector("#booking-days").value);
+      const plan = document.querySelector("#booking-plan").value;
+      const days = plan === "Hourly" ? 1 : duration;
+      const end = addDays(start, days);
+      const error = document.querySelector("#booking-error");
+      if (!vehicle || !customer || !Number.isInteger(duration) || duration < 1 || duration > 365) { error.textContent = "Enter a customer, a vehicle, and a valid rental duration."; return; }
+      if ((state.blacklistedCustomers || []).some((entry) => entry.name.toLowerCase() === customer.toLowerCase())) { error.textContent = "This customer is blocklisted and cannot create a reservation."; return; }
+      if (start < todayISO) { error.textContent = "Pickup date cannot be in the past."; return; }
+      const startAt = `${start}T${document.querySelector("#booking-start-time").value || "00:00"}`;
+      const endAt = plan === "Hourly" ? addHoursIST(startAt, duration) : `${end}T00:00`;
+      if (conflicts(vehicle.id, plan === "Hourly" ? startAt : start, plan === "Hourly" ? endAt : end)) { error.textContent = "Those dates or times overlap another reservation for this vehicle."; return; }
+      const kmCap = document.querySelector("#booking-km-cap").value;
+      const quote = quoteFor(vehicle, start, duration, customer, plan, kmCap);
+      const previousState = cloneState();
+      const id = `RW-${state.nextId++}`;
+      state.bookings.push({ id, vehicleId: vehicle.id, customer, start, end, startAt, endAt, startOdometer: vehicle.odometerKm || 0, charge: quote.rental, deposit: vehicle.securityDeposit || quote.deposit, returned: false, created: todayISO, plan, duration: plan === "Hourly" ? duration : undefined, kmCap, kyc: { dl, aadhaarLast4, digiLockerReference, emergencyContact: emergency, verificationStatus: kycStatus } });
+      if (!await saveChanges(previousState)) { error.textContent = "The reservation could not be saved."; return; }
+      render(); document.querySelector("#booking-dialog").close(); showToast(`${id} reserved. Total due: ${moneyExact(quote.due)}.`);
+    });
+    document.querySelector("#recommend-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const budget = Number(document.querySelector("#rec-budget").value);
+      const distance = Number(document.querySelector("#rec-distance").value);
+      const passengers = Number(document.querySelector("#rec-passengers").value);
+      const days = Math.max(1, Math.ceil(distance / 250));
+      const choices = state.vehicles.map((vehicle) => ({ vehicle, quote: quoteFor(vehicle, todayISO, days) })).filter(({ vehicle, quote }) => vehicle.range >= distance && vehicle.seats >= passengers && quote.due <= budget && !conflicts(vehicle.id, todayISO, addDays(todayISO, days))).sort((a, b) => a.quote.due - b.quote.due).slice(0, 3);
+      const output = document.querySelector("#rec-error");
+      output.innerHTML = choices.length ? `Estimated ${days} day(s). Top matches:<br>${choices.map(({ vehicle, quote }) => `<strong>${escapeHTML(vehicle.model)}</strong> · ${moneyExact(quote.due)} · ${vehicle.seats} seats · ${vehicle.range} km range <button type="button" class="button small" data-pick="${escapeHTML(vehicle.id)}">Book</button>`).join("<br>")}` : "No available vehicle meets all three requirements.";
+    });
+    document.querySelector("#return-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const booking = state.bookings.find((item) => item.id === document.querySelector("#return-booking-id").value);
+      const returnDate = document.querySelector("#return-date").value;
+      const error = document.querySelector("#return-error");
+      if (!booking || returnDate < booking.start) { error.textContent = "Return date must be on or after pickup."; return; }
+      const lateDays = Math.max(0, Math.round((new Date(returnDate + "T00:00:00") - new Date(booking.end + "T00:00:00")) / 86400000));
+      const days = Math.max(1, Math.round((new Date(booking.end + "T00:00:00") - new Date(booking.start + "T00:00:00")) / 86400000));
+      const penalty = lateDays * (booking.charge / days) * 1.5;
+      const damage = Math.max(0, Number(document.querySelector("#damage-cost").value) || 0);
+      const returnOdometer = Number(document.querySelector("#return-odometer").value);
+      const startOdometer = Number(booking.startOdometer ?? byId(booking.vehicleId)?.odometerKm ?? 0);
+      if (!Number.isFinite(returnOdometer) || returnOdometer < startOdometer) { error.textContent = "Return odometer cannot be below the pickup odometer."; return; }
+      updateReturnSettlement();
+      const excessKmCharge = Math.max(0, Number(document.querySelector("#excess-km-charge").value) || 0);
+      const toll = Math.max(0, Number(document.querySelector("#return-toll").value) || 0);
+      const description = document.querySelector("#damage-description").value.trim();
+      const previousState = cloneState();
+      booking.returned = true; booking.actualReturn = returnDate;
+      booking.endOdometer = returnOdometer;
+      booking.tollDeduction = toll;
+      booking.depositRefund = Math.max(0, booking.deposit - penalty - damage - excessKmCharge - toll);
+      booking.additionalDue = Math.max(0, penalty + damage + excessKmCharge + toll - booking.deposit);
+      const vehicle = byId(booking.vehicleId);
+      if (vehicle) vehicle.odometerKm = returnOdometer;
+      if (vehicle && toll > 0) vehicle.fastagBalance = Math.max(0, (vehicle.fastagBalance || 0) - toll);
+      if (penalty > 0) state.extraRevenue.push({ date: returnDate, amount: penalty, kind: "Late return" });
+      if (toll > 0) state.extraRevenue.push({ date: returnDate, amount: toll, kind: "Fastag toll deduction" });
+      if (excessKmCharge > 0) state.extraRevenue.push({ date: returnDate, amount: excessKmCharge, kind: "Excess distance" });
+      if (damage > 0) state.extraRevenue.push({ date: returnDate, amount: damage, kind: "Damage assessment", description });
+      if (!await saveChanges(previousState)) { error.textContent = "The return could not be saved."; return; }
+      render(); document.querySelector("#return-dialog").close();
+      showToast(`Return complete · refund ${money(booking.depositRefund)} · additional due ${money(booking.additionalDue)}.`);
+    });
+    document.querySelector("#vehicle-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const id = document.querySelector("#new-id").value.trim();
+      const error = document.querySelector("#vehicle-error");
+      if (state.vehicles.some((vehicle) => vehicle.id.toLowerCase() === id.toLowerCase())) { error.textContent = "That fleet ID already exists."; return; }
+      const vehicleType = document.querySelector("#new-type").value;
+      const image = ({ Hatchback: "car", SUV: "sedan", Premium: "luxury", "Two-Wheeler": "bike", EV: "ev" })[vehicleType];
+      const range = vehicleType === "Two-Wheeler" ? 350 : Number(document.querySelector("#new-range").value) || 500;
+      const previousState = cloneState();
+      state.vehicles.push({
+        id,
+        model: document.querySelector("#new-model").value.trim(),
+        type: vehicleType,
+        price: Number(document.querySelector("#new-price").value),
+        age: Number(document.querySelector("#new-age").value),
+        seats: Number(document.querySelector("#new-seats").value),
+        range,
+        image,
+        registrationNumber: document.querySelector("#new-registration").value.trim(),
+        fuelType: document.querySelector("#new-fuel").value,
+        transmission: document.querySelector("#new-transmission").value,
+        fastagId: document.querySelector("#new-fastag").value.trim(),
+        fastagBalance: Number(document.querySelector("#new-fastag-balance").value || 0),
+        securityDeposit: vehicleType === "Premium" ? 15000 : vehicleType === "SUV" ? 10000 : vehicleType === "Two-Wheeler" ? 2000 : 3000,
+        odometerKm: 0,
+        serviceDueKm: 5000,
+        nextServiceDate: addDays(todayISO, 90),
+        maintenanceStatus: "Ready",
+        status: "available",
+        permitStatus: "Local permit",
+        pucExpiry: "2027-12-31",
+        fitnessCertificate: "Valid"
+      });
+      if (!await saveChanges(previousState)) { error.textContent = "The vehicle could not be saved."; return; }
+      render(); document.querySelector("#vehicle-dialog").close(); showView("fleet"); showToast(`${id} added to the fleet.`);
+    });
+    document.querySelector("#new-type").addEventListener("change", (event) => { document.querySelector("#new-range-field").style.display = ["EV", "Hatchback", "SUV", "Premium"].includes(event.target.value) ? "grid" : "none"; });
+    const saveAdminAction = async (mutate, message) => {
+      const previousState = cloneState();
+      mutate();
+      if (!await saveChanges(previousState)) return;
+      render();
+      showToast(message);
+    };
+    document.addEventListener("click", async (event) => {
+      const returnButton = event.target.closest("[data-return]");
+      const bookButton = event.target.closest("[data-book-vehicle]");
+      const pickButton = event.target.closest("[data-pick]");
+      const blacklistButton = event.target.closest("[data-blacklist]");
+      const verifyButton = event.target.closest("[data-verify-kyc]");
+      const maintenanceButton = event.target.closest("[data-maintenance]");
+      const fastagButton = event.target.closest("[data-fastag-topup]");
+      if (returnButton) openReturn(returnButton.dataset.return);
+      if (bookButton) openBooking(bookButton.dataset.bookVehicle);
+      if (pickButton) { const id = pickButton.dataset.pick; document.querySelector("#recommend-dialog").close(); showView("fleet"); openBooking(id); }
+      if (blacklistButton) {
+        const name = blacklistButton.dataset.blacklist;
+        const blocked = blacklistButton.dataset.blocked === "true";
+        const reason = blocked ? "" : window.prompt(`Reason to block ${name}:`, "Policy review required");
+        if (!blocked && reason === null) return;
+        await saveAdminAction(() => {
+          state.blacklistedCustomers ||= [];
+          state.blacklistedCustomers = blocked ? state.blacklistedCustomers.filter((entry) => entry.name.toLowerCase() !== name.toLowerCase()) : [...state.blacklistedCustomers, { name, reason: reason.trim(), created: todayISO }];
+        }, blocked ? `${name} removed from the blocklist.` : `${name} added to the blocklist.`);
+      }
+      if (verifyButton) {
+        const booking = [...state.bookings].reverse().find((item) => item.customer === verifyButton.dataset.verifyKyc && item.kyc);
+        if (booking) await saveAdminAction(() => { booking.kyc.verificationStatus = "Manual documents verified"; booking.kyc.verifiedAt = todayISO; }, `KYC review recorded for ${verifyButton.dataset.verifyKyc}.`);
+      }
+      if (maintenanceButton) {
+        const vehicle = byId(maintenanceButton.dataset.maintenance);
+        if (vehicle) await saveAdminAction(() => {
+          vehicle.maintenanceStatus = vehicle.maintenanceStatus === "Due" ? "Ready" : "Due";
+          if (vehicle.maintenanceStatus === "Ready") {
+            vehicle.lastServiceDate = todayISO;
+            vehicle.serviceDueKm = (vehicle.odometerKm || 0) + 5000;
+            vehicle.nextServiceDate = addDays(todayISO, 90);
+          } else {
+            state.maintenanceRecords ||= [];
+            state.maintenanceRecords.push({ vehicleId: vehicle.id, date: todayISO, status: "Scheduled" });
+          }
+        }, vehicle.maintenanceStatus === "Due" ? `Service completed for ${vehicle.model}.` : `Service marked due for ${vehicle.model}.`);
+      }
+      if (fastagButton) {
+        const vehicle = byId(fastagButton.dataset.fastagTopup);
+        const amount = Number(window.prompt(`Fastag top-up amount for ${vehicle?.model || "vehicle"} (₹):`, "500"));
+        if (!vehicle || !Number.isFinite(amount) || amount <= 0) return;
+        await saveAdminAction(() => { vehicle.fastagBalance = (vehicle.fastagBalance || 0) + amount; }, `${vehicle.model} Fastag topped up by ${money(amount)}.`);
+      }
+    });
+    document.querySelector("#reset-data").addEventListener("click", async () => {
+      if (!confirm("Reset shared Roadwise data for every connected device?")) return;
+      const previousState = cloneState();
+      state = seedData();
+      if (!await saveChanges(previousState)) return;
+      render(); showToast("Demo data restored.");
+    });
+    document.querySelector("#export-data").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a"); anchor.href = url; anchor.download = "roadwise-rental-data.json"; anchor.click(); URL.revokeObjectURL(url);
+    });
+    document.querySelector("#import-data").addEventListener("click", () => document.querySelector("#import-file").click());
+    document.querySelector("#import-file").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const importedState = JSON.parse(await file.text());
+        if (!isValidState(importedState)) throw new Error("This file is not a valid Roadwise data export.");
+        const previousState = cloneState();
+        state = importedState;
+        if (!await saveChanges(previousState)) return;
+        render();
+        showToast("Data imported and saved locally.");
+      } catch (error) {
+        showToast(error.message || "Could not import this file.");
+      } finally {
+        event.target.value = "";
+      }
+    });
+    updateStorageStatus("Local demo mode");
+    render();
+  </script>
+</body>
+</html>
